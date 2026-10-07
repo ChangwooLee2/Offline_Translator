@@ -1,9 +1,9 @@
 // 오프라인 캐시: 한 번 열어 두면 인터넷 없이도 번역기 화면과 사전이 열림
 // 화면 파일은 인터넷이 되면 항상 최신본을 받고(네트워크 우선), 사전(13MB)은 한 번 받으면 캐시 사용
-const VERSION = '2026-10-07a';
-const SHELL = 'shell-' + VERSION, DICT = 'dict-' + VERSION;
+const VERSION = '2026-10-07b';
+const SHELL = 'shell-' + VERSION, DICT = 'dict-2026-10-07a';   // 사전 파일이 바뀔 때만 DICT 이름을 바꿈
 const SHELL_FILES = ['./', 'index.html', 'sync.js', 'dict-lookup.js', 'manifest.webmanifest',
-                     'qrcode.js', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'download.html'];
+                     'qrcode.js', 'study.js', 'study.css', 'study/sample/2026-10-07.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'download.html'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));

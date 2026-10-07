@@ -1,0 +1,93 @@
+{
+  "id": "2026-10-07",
+  "day": 1,
+  "date": "2026-10-07",
+  "title": "Lessons from an Ammonia Bunkering Trial",
+  "topic": "암모니아 벙커링 시운전 결과 보고와 가스 감지기 배치 협의",
+  "level": "B2+",
+  "minutes": 30,
+  "note_ko": "첫날이라 레벨 확인용으로 B2+ 수준의 업무 문서·회의로 구성했습니다. 끝나고 난이도·분량 피드백을 꼭 남겨 주세요. 다음 자료부터 반영합니다.\n지문과 대화에서 모르는 단어는 더블클릭(휴대폰은 길게 눌러 선택)하면 사전 팝업이 뜨고, [단어장 추가]로 저장됩니다.",
+  "review": null,
+  "vocab": [
+    {"word": "commissioning", "pos": "n.", "meaning_ko": "시운전, (설비) 가동 개시 절차", "example": "Commissioning of the fuel supply system took two weeks longer than planned."},
+    {"word": "mitigate", "pos": "v.", "meaning_ko": "(위험·피해를) 완화하다", "example": "Water curtains were installed to mitigate the consequences of a release."},
+    {"word": "redundancy", "pos": "n.", "meaning_ko": "이중화, 여유 설계", "example": "The surveyor asked whether the detector layout provides sufficient redundancy."},
+    {"word": "discrepancy", "pos": "n.", "meaning_ko": "불일치, 차이", "example": "We found a discrepancy between the P&ID and the as-built drawings."},
+    {"word": "stringent", "pos": "adj.", "meaning_ko": "(규정·기준이) 엄격한", "example": "Port authorities are likely to impose more stringent requirements on ammonia bunkering."},
+    {"word": "root cause", "pos": "phr.", "meaning_ko": "근본 원인", "example": "The team has not yet identified the root cause of the pressure drop."},
+    {"word": "err on the side of caution", "pos": "phr.", "meaning_ko": "안전한 쪽을 택하다, 신중을 기하다", "example": "Until we have more data, I'd rather err on the side of caution and keep the lower alarm setpoint."},
+    {"word": "follow up on", "pos": "phr.", "meaning_ko": "~을 후속 조치하다, 다시 확인하다", "example": "Could you follow up on the revised drawings with the vendor this week?"}
+  ],
+  "reading": {
+    "title": "Technical Memo: Key Findings from the Ship-to-Ship Ammonia Bunkering Trial",
+    "source_ko": "기술 메모 (시운전 결과 요약)",
+    "paragraphs": [
+      "Last month, our project team completed a ship-to-ship ammonia bunkering trial in a sheltered anchorage. The objective was not only to verify the transfer procedure but also to collect field data that could inform the detector layout and emergency response plan for the next vessel in the series. Overall, the transfer of roughly 400 cubic meters of liquid ammonia was completed without a reportable incident. However, several findings deserve attention before the procedure is finalized.",
+      "First, the time required for purging and inerting the transfer hoses was significantly longer than estimated. The procedure assumed that nitrogen purging would take about 40 minutes, but in practice it took close to two hours. The main reason was that residual ammonia concentrations at the hose connection remained above the target value for longer than expected. This suggests that the purging criteria, rather than the nitrogen supply rate, were the limiting factor.",
+      "Second, two of the fixed gas detectors near the bunker station recorded brief readings of 20 to 30 ppm during disconnection, while portable detectors carried by the crew recorded much lower values. Although these readings were well below the immediately dangerous level of 300 ppm, the discrepancy raises a question about detector placement. Ammonia vapor is lighter than air, but cold vapor released from a liquid line can initially behave like a heavier gas and accumulate near deck level. Detectors mounted at a single height may therefore miss or overstate local concentrations.",
+      "Third, communication between the two vessels relied heavily on handheld radios, and on two occasions the confirmation of valve positions was delayed. No unsafe condition resulted, but the crews agreed that a shared checklist with explicit hold points would reduce ambiguity.",
+      "Based on these findings, we recommend three actions: revise the purging criteria and time allowance in the procedure; install additional detectors at two heights around the manifold and verify their response with a controlled release test; and introduce a joint checklist that both vessels sign off at each hold point. We expect the classification society to review these changes during the next design approval meeting. Until then, the current alarm setpoint of 25 ppm should remain unchanged."
+    ],
+    "questions": [
+      {"q": "What is the main purpose of the memo?", "options": ["To report that the bunkering trial failed and must be repeated", "To summarize trial findings and propose changes before finalizing the procedure", "To request additional budget for nitrogen supply equipment", "To explain why the alarm setpoint should be raised"], "answer": 1, "explain_ko": "첫 문단 끝 'several findings deserve attention before the procedure is finalized'와 마지막 문단의 권고 3가지가 요지. 실패 보고(①)나 경보값 상향(④)은 본문과 반대."},
+      {"q": "According to the memo, why did purging take longer than expected?", "options": ["The nitrogen supply rate was too low", "The hoses were longer than specified", "Residual ammonia stayed above the target concentration for longer", "The crew delayed the start because of radio problems"], "answer": 2, "explain_ko": "2문단: 잔류 암모니아 농도가 목표값 이상으로 오래 유지됨 → 질소 공급 속도가 아니라 퍼징 기준이 제약(①은 명시적으로 부정됨)."},
+      {"q": "What can be inferred about the difference between fixed and portable detector readings?", "options": ["The portable detectors were probably faulty", "Vapor behavior near the deck may cause readings to vary with detector height", "The fixed detectors should be removed from the bunker station", "Ammonia concentrations exceeded the dangerous level during disconnection"], "answer": 1, "explain_ko": "3문단: 차가운 증기가 처음엔 무거운 가스처럼 갑판 근처에 머물 수 있어, 한 높이에만 설치하면 농도를 놓치거나 과대평가 → 높이에 따라 값이 달라질 수 있다는 추론. ④는 300 ppm보다 훨씬 낮았다고 명시."},
+      {"q": "In paragraph 5, the phrase \"sign off\" is closest in meaning to:", "options": ["switch off", "formally approve", "leave the vessel", "send a signal"], "answer": 1, "explain_ko": "sign off (on) = 서명해 승인·확인하다. 각 hold point에서 양 선박이 체크리스트를 확인·승인한다는 뜻."}
+    ]
+  },
+  "listening": {
+    "title": "Design review call: detector layout at the bunker station",
+    "setting_ko": "시운전 결과를 두고 프로젝트 엔지니어, 선급 검사관, 감지기 공급사 엔지니어가 화상회의를 합니다.",
+    "speakers": [
+      {"name": "Jiho", "role": "Project engineer", "voice": "male", "accent": "US"},
+      {"name": "Laura", "role": "Class surveyor", "voice": "female", "accent": "GB"},
+      {"name": "Mark", "role": "Detector vendor", "voice": "male", "accent": "AU"}
+    ],
+    "lines": [
+      {"s": 0, "text": "Thanks for joining, everyone. I'd like to focus on the detector layout today, since that's the item most likely to affect the design approval schedule."},
+      {"s": 1, "text": "Agreed. I read your memo. The readings during disconnection were low, but I'm more concerned about the gap between the fixed and portable detectors."},
+      {"s": 2, "text": "If I may, part of that gap is probably response time. Our fixed units average over a short window, whereas the portable ones react almost instantly."},
+      {"s": 1, "text": "That's possible, but it doesn't explain why the fixed readings were higher, not lower."},
+      {"s": 2, "text": "Fair point. In that case, location is the more likely explanation."},
+      {"s": 0, "text": "That's our view as well. We're proposing to add detectors at two heights around the manifold, roughly half a meter above deck and about two meters up."},
+      {"s": 1, "text": "Two heights makes sense. How do you intend to verify the new layout? A drawing alone won't be enough for me."},
+      {"s": 0, "text": "We're planning a controlled release test with a small quantity, under supervision, before the next bunkering operation."},
+      {"s": 1, "text": "Good. Please send me the test procedure in advance, including the release rate and the acceptance criteria."},
+      {"s": 2, "text": "We can provide the response time data for both detector types. Would the end of next week work?"},
+      {"s": 0, "text": "The end of next week is a bit tight for us, because we also need to update the cable routing. Could we say Wednesday the twenty-second?"},
+      {"s": 1, "text": "Wednesday is fine, as long as I have everything at least five working days before the design approval meeting."},
+      {"s": 0, "text": "Understood. One more thing. Some people on our side suggested raising the alarm setpoint to reduce nuisance alarms."},
+      {"s": 1, "text": "I'd strongly advise against changing it now. Until the test results are in, I'd rather err on the side of caution."},
+      {"s": 2, "text": "From a hardware perspective, nuisance alarms are usually a placement issue rather than a setpoint issue anyway."},
+      {"s": 0, "text": "Okay, then we'll keep twenty-five ppm. To summarize: Mark sends the response time data, we send the test procedure and revised layout by the twenty-second, and Laura reviews before the meeting."},
+      {"s": 1, "text": "That works for me. And please include the joint checklist you mentioned in the memo. I'd like to see the hold points."},
+      {"s": 0, "text": "Will do. I'll follow up with a short email after this call so everyone has the action items in writing."}
+    ],
+    "questions": [
+      {"q": "What is the surveyor most concerned about at the start of the call?", "options": ["The total quantity of ammonia transferred", "The difference between fixed and portable detector readings", "The cost of additional detectors", "The length of the purging procedure"], "answer": 1, "explain_ko": "Laura: 'more concerned about the gap between the fixed and portable detectors'."},
+      {"q": "Why does the surveyor reject response time as the full explanation?", "options": ["Because the portable detectors were not calibrated", "Because the fixed detectors showed higher values, not lower", "Because the vendor provided no data", "Because response time is not relevant for ammonia"], "answer": 1, "explain_ko": "평균화로 느린 고정식이라면 값이 더 낮아야 하는데 실제로는 더 높았음 → 위치 문제가 더 유력."},
+      {"q": "Why does Jiho propose Wednesday the 22nd instead of the end of next week?", "options": ["The surveyor is unavailable next week", "The vendor needs more time to collect data", "His team also has to update the cable routing", "The design approval meeting was postponed"], "answer": 2, "explain_ko": "'we also need to update the cable routing' — 케이블 경로 수정까지 해야 해서 일정이 빠듯함."},
+      {"q": "What is decided about the alarm setpoint?", "options": ["It will be raised to reduce nuisance alarms", "It will be lowered after the test", "It will stay at 25 ppm for now", "The vendor will decide after reviewing the data"], "answer": 2, "explain_ko": "검사관이 반대하고, Jiho가 'we'll keep twenty-five ppm'으로 정리."}
+    ]
+  },
+  "writing": {
+    "tasks": [
+      {
+        "type": "email",
+        "prompt_ko": "회의 직후 보내는 후속 이메일을 쓰세요. 받는 사람: Laura(선급), Mark(공급사). 포함할 것: 회의 감사 인사 한 줄, 결정 사항(경보값 25 ppm 유지), 각자의 할 일과 기한(Mark: 응답시간 데이터 / 우리: 시험 절차·수정 배치도·공동 체크리스트, 10월 22일까지), 질문 있으면 연락 달라는 맺음말.",
+        "prompt_en": "Write a follow-up email after the call summarizing decisions and action items.",
+        "hints": ["Thank you for your time on today's call.", "As agreed, ...", "Please find the action items below:", "Let me know if I have missed anything."],
+        "min_words": 80,
+        "model": "Subject: Action items – bunker station detector layout\n\nDear Laura and Mark,\n\nThank you for your time on today's call. Below is a brief summary of what we agreed.\n\nDecision:\n- The gas detection alarm setpoint will remain at 25 ppm until the controlled release test has been completed.\n\nAction items:\n- Mark: share response time data for the fixed and portable detectors by Wednesday, 22 October.\n- Our team: submit the controlled release test procedure (including release rate and acceptance criteria), the revised two-height detector layout, and the joint bunkering checklist by Wednesday, 22 October.\n- Laura: review the documents ahead of the design approval meeting.\n\nPlease let me know if I have missed or misstated anything.\n\nBest regards,\nJiho"
+      },
+      {
+        "type": "translate",
+        "prompt_ko": "다음 세 문장을 영어로 쓰세요.\n1) 시험 결과가 나올 때까지 현재 경보 설정값을 유지할 것을 권고합니다.\n2) 고정식 감지기와 휴대용 감지기 값의 차이는 설치 위치 때문일 가능성이 높습니다.\n3) 설계 승인 회의 최소 5영업일 전까지 수정 도면을 보내 주실 수 있을까요?",
+        "prompt_en": "Translate the three sentences into natural business English.",
+        "hints": ["We recommend that ...", "is likely due to ...", "at least five working days before ..."],
+        "min_words": 0,
+        "model": "1) We recommend keeping the current alarm setpoint until the test results are available.\n2) The difference between the fixed and portable detector readings is most likely due to their installation location.\n3) Could you send us the revised drawings at least five working days before the design approval meeting?"
+      }
+    ]
+  }
+}

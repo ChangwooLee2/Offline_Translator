@@ -7,8 +7,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="번역기">
-<title>오프라인 번역기</title>
+<meta name="apple-mobile-web-app-title" content="영어 데스크">
+<link rel="stylesheet" href="study.css">
+<title>영어 데스크</title>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASISURBVHhe7ZpPaBRXHMdzzDFHD5mMxt1kNhYM6CGZKc0eoihibUFKDsFNZgItIlRKqUE8hHgQhODBkyjmIvUPIgUPSr3YXoRSCT0FGmgKgro7tlta2qCXLd+QXd58387Om83OzEviFz6QzJvZ9/t9573fvPnT1fVe7xWpwdKr3Xs9v5h3y1N5z5/rGG55Cr87UPIt7lML7fXKR3Kuv5T3/FrS5LzKMgzhGDKRWar25Dx/kYNMBdd/ZJbKuzim1ITOc56/KgWWKpVqZtMi5/m35YAywPWfcWyJK+9WJqRAMiQ3XZ7lGBNV9kOfqVQ5xsSEOScHkD2p1YIB9/Un3HmnEMVtkbiVCY41EeWmK2elzjvEpgzw/DmONRFtrM648wCfzlcDybTS5OW/GseJ4t9UYGsagH3rx4ni31RAHwOiCEs0bLsiW8OAQ+f/bCT5/fO3gbYdYcCNx/81kvz6+t+Btm1vwP7TbwJJ4n+xXRQfq4D+Biw8+LeRIEYCt29rA/jKYH/1h7RPmMQrRQv0NYCH/tytf6R9QJi2tAFI/udf3zWS4covIorbFNDPAAxzMXn8zYVPZFsZgCUuC2sA3k9EFLcpoIcBOMPitR6KOvN1RHFbFP0nvntqFJy5WAzaU+agUzQHRtVvpaMMEFd60L0f15SSB6K4LYr+w1drfQWnbYyCswxDOF9JUQYAmICzLt7pqZClAQ0s+5E5NBb+tFnFgHbRwgCMBsuuhk6LnWAAMAp286fNO8UAYFiO/LR5Zxlgy0+b8QyeO+8UuhkApFqg20uROnuK81LwnaDXGg0+bc7NvB7hznXAPDgpBd8JsGAKGADhTQwHkCnTL2t9+4pS8J0gxIDkCmE79B+/W7twcaH2+MkPAYpHJ6SE4tLUALO02p3WBxGRnFqp9X1wOFBA67p281spobg0NQDKz5SH856/JgWUMrtHz9Q+K53h3BvihOISagCEgrj+yUqTwBLn1Mp68ggSZzpMMIeTikNLAyBMh/zMm0tSgAmCOY9hjwALB8YDCV++ci3w/2anQaQBovAl18bLUxTJWOB+HouZMPaML9TMkc+lau+dPhdIGIXvp+e/BLZxUnGIZcBmhI64cxXu3H/YSPS331+sb8MVQdRmpoHWBvDwrw93jIJm29tBawO+/GY+kKh4pjEaRMEsPl4FrQ1oNdf5yoBawceroK0BBz/6OJAgaoHYzmsDbldFWwN4+GPI81KY1c400NYAnuMqamcaaGkAV3lVtTMNtDSg2Wrv2ElXgusAFHcaaGkAD/9Wt718pUDt4H1aoZ0BOLMs3keEiyUM4X1aoZ0BfH2PWuXx5RLCNt4vjPQMsJxZ7rwZGO7iPFdJhmtDnDqQmgF4+sqd64BRsL/gWBORaTkj3LkOmEP2MMeamPAmhgPIEqNgr5nmWDfHmZhUC2GKLHKMiQpuG5az1CSQ1DEs+5W5f6yHY0xcmHMYehxQ2vQOfXiEY0tNKIj4ZIWDSgOc+UyTrwvToa9gX+IAE2Yxk2EfJXzJZVjOWRTJjmM5s+tfiqVZ7bei/gewhoXMDRyqWAAAAABJRU5ErkJggg==">
 <style>
   :root {
@@ -222,7 +223,7 @@
     <button id="sClose">닫기</button>
   </div>
   <div class="s-body">
-    <p style="margin:0">이력과 단어장을 내 <b>비공개</b> GitHub 저장소의 <code>data.json</code>에 저장해 회사 PC·집 PC·휴대폰에서 같이 씁니다. 기기마다 처음 한 번만 설정하면 됩니다.</p>
+    <p style="margin:0">이력·단어장·영어 학습 기록을 내 <b>비공개</b> GitHub 저장소의 <code>data.json</code>에 저장해 회사 PC·집 PC·휴대폰에서 같이 씁니다. 기기마다 처음 한 번만 설정하면 됩니다.</p>
     <div id="sState" class="s-state">설정되지 않음</div>
 
     <div id="sForm">
@@ -263,6 +264,11 @@
 <div id="gutterH" class="gutter" title="끌어서 이력 창 폭 조절 · 더블클릭하면 원래 크기"></div>
 
 <main>
+  <nav id="topbar">
+    <span class="brand">영어 데스크</span>
+    <div class="modes"><button id="modeTr" class="on" type="button">번역</button><button id="modeSt" type="button">영어 학습</button></div>
+    <div class="tools"></div>
+  </nav>
   <div id="mtop">
     <div class="tabs"><button id="tabKo" class="on">한→영</button><button id="tabEn">영→한</button></div>
     <div class="tools"></div>
@@ -279,6 +285,7 @@
   <section id="koen"></section>
   <div id="gutterY" class="gutter y" title="끌어서 위아래 높이 조절 · 더블클릭하면 원래 크기"></div>
   <section id="enko"></section>
+  <div id="studyView"></div>
 </main>
 
 <template id="pane">
@@ -506,23 +513,14 @@ function makePane(root, src, dst, placeholder) {
 const koIn = makePane(document.getElementById('koen'), 'ko', 'en', '한국어를 입력하세요');
 const enIn = makePane(document.getElementById('enko'), 'en', 'ko', 'Type English here');
 
-// 공통 도구를 한→영 결과칸 위에 배치: [설명] [저장] [결과 복사] | [팝업] [초기화] [이력] [단어장]
+// 공통 도구(팝업·초기화·이력·단어장·동기화)는 맨 위 머리줄에 — 번역·학습 화면 공통
 {
-  const bar = document.querySelector('#koen .bar-r');
   const tools = document.getElementById('tools').content.cloneNode(true);
-  bar.querySelector('.save').before(tools.querySelector('.hint'));
-  bar.append(...tools.childNodes);
+  tools.querySelector('.hint')?.remove(); tools.querySelector('.divider')?.remove();
+  document.querySelector('#topbar .tools').append(...tools.childNodes);
 }
-
-// 휴대폰 폭에서는 도구 버튼을 위 머리줄로 옮기고, 한 번에 한 방향만 표시
-const toolNodes = [...document.querySelector('#koen .bar-r').children].filter(n => !n.matches('.save, .copy, .hint'));
+// 휴대폰 폭에서는 한 번에 한 방향만 표시
 const mq = matchMedia('(max-width: 720px)');
-function placeTools() {
-  const bar = document.querySelector('#koen .bar-r');
-  if (mq.matches) document.querySelector('#mtop .tools').append(...toolNodes);
-  else bar.append(...toolNodes);
-}
-mq.addEventListener('change', placeTools); placeTools();
 function setTab(dir) {
   document.body.classList.toggle('m-koen', dir === 'koen');
   document.body.classList.toggle('m-enko', dir === 'enko');
@@ -774,7 +772,7 @@ async function showPop(text, x, y, context = '') {
   const t = panes[dir]?.translator();
   if (!t) {
     outEl.className = 'p-out loading';
-    outEl.textContent = '이 방향 번역 모델이 아직 준비되지 않았습니다. 해당 칸의 [번역 모델 다운로드]를 먼저 눌러 주세요.';
+    outEl.textContent = '문장 번역 엔진이 아직 준비되지 않았습니다. [번역] 화면의 해당 칸에서 [번역 모델 다운로드] 또는 [온라인 번역 사용]을 먼저 눌러 주세요.';
     placePop(x, y);
     await dictDone;                            // 사전 뜻은 번역 모델 없이도 표시
     if (my === popSeq && dictRes) { popData = { word: dictRes.word, meaning: OfflineDict.summary(dictRes), example: context.trim() !== text ? context : '' }; vBtn.disabled = false; }
@@ -831,8 +829,9 @@ function selectWordAtCaret(ta) {
   return v.slice(s, e);
 }
 
+const inStudy = t => !!(t && t.closest && t.closest('#studyView') && !t.closest('textarea, input'));
 document.addEventListener('mouseup', e => {
-  if (e.button !== 0 || !popOn.checked) return;
+  if (e.button !== 0 || !(popOn.checked || inStudy(e.target))) return;
   if (pop.contains(e.target) || e.target.closest('.gutter, button, input, label, [contenteditable]')) return;
   if (document.body.classList.contains('resizing')) return;
   const x = e.clientX, y = e.clientY, ctrl = e.ctrlKey;
@@ -848,7 +847,10 @@ pop.querySelector('.p-close').addEventListener('click', hidePop);
 pop.querySelector('.p-vocab').addEventListener('click', () => {
   if (!popData) return;
   const b = pop.querySelector('.p-vocab');
-  b.textContent = Vocab.add(popData) ? '추가됨 ✓' : '이미 있음';
+  const src = window.Study ? Study.vocabSrc() : '';
+  const ok = Vocab.add({ ...popData, src });
+  if (ok && src) Study.noteWord(popData.word);
+  b.textContent = ok ? '추가됨 ✓' : '이미 있음';
   b.disabled = true;
 });
 pop.querySelector('.p-copy').addEventListener('click', async () => {
@@ -871,13 +873,13 @@ const Vocab = {
   load() { try { return JSON.parse(localStorage.getItem(V_KEY)) || []; } catch { return []; } },
   save(list) { try { localStorage.setItem(V_KEY, JSON.stringify(list)); } catch {} renderVocab(); Sync.schedule(); },
   // 같은 단어(대소문자 무시)가 있으면 추가하지 않고 false
-  add({ word, meaning, example = '' }) {
+  add({ word, meaning, example = '', src = '' }) {
     word = word.trim(); meaning = meaning.trim();
     const list = this.load(), key = word.toLowerCase();
     if (list.some(x => x.word.toLowerCase() === key)) return false;
     list.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
                    word, meaning, example: example.trim().slice(0, 300),
-                   lang: HANGUL.test(word) ? 'ko' : 'en', t: Date.now() });
+                   lang: HANGUL.test(word) ? 'ko' : 'en', t: Date.now(), ...(src ? { src } : {}) });
     this.save(list); return true;
   },
   update(id, patch) { this.save(this.load().map(x => x.id === id ? { ...x, ...patch, u: Date.now() } : x)); },
@@ -1041,7 +1043,7 @@ function renderSync(st = Sync.state) {
     : (st.status === 'err' ? '⚠ ' + st.msg : st.status === 'busy' ? '동기화 중…' : '연결됨: ' + c.repo + (last ? ' · 마지막 동기화 ' + last : ''));
 }
 Sync.onState(renderSync);
-Sync.onApplied = () => { renderHistory(); renderVocab(); };
+Sync.onApplied = () => { renderHistory(); renderVocab(); window.Study && Study.refresh(); };
 syncBtn.addEventListener('click', () => {
   if (sPanel.classList.contains('open')) { setSide(null); return; }
   setSide(sPanel); renderSync();
@@ -1049,7 +1051,7 @@ syncBtn.addEventListener('click', () => {
 });
 $id('sClose').addEventListener('click', () => setSide(null));
 $id('sSave').addEventListener('click', async () => {
-  try { await Sync.setup($id('sRepo').value, $id('sToken').value); $id('sToken').value = ''; }
+  try { await Sync.setup($id('sRepo').value, $id('sToken').value); $id('sToken').value = ''; window.Study && Study.onSyncConfigured(); }
   catch (e) { sState.className = 's-state err'; sState.textContent = '⚠ ' + e.message; }
   renderSync();
 });
@@ -1093,7 +1095,10 @@ if (syncImported) { setSide(sPanel); renderSync(); }
 let touchSel = null, lastPointer = 'mouse';
 document.addEventListener('pointerdown', e => { lastPointer = e.pointerType; }, true);
 function onTouchSelection() {
-  if (!popOn.checked || lastPointer !== 'touch') return;
+  if (lastPointer !== 'touch') return;
+  const anc = getSelection().anchorNode, a = document.activeElement;
+  const studySel = !!(anc && (anc.nodeType === 1 ? anc : anc.parentElement)?.closest?.('#studyView')) && !(a && /TEXTAREA|INPUT/.test(a.tagName));
+  if (!popOn.checked && !studySel) return;
   clearTimeout(touchSel);
   touchSel = setTimeout(() => {
     const text = selectedText();
@@ -1119,5 +1124,6 @@ document.addEventListener('keydown', e => {
   if (e.ctrlKey && e.key === 'ArrowDown') { e.preventDefault(); enIn.focus(); }
 });
 </script>
+<script src="study.js"></script>
 </body>
 </html>

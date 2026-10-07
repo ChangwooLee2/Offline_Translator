@@ -1,8 +1,8 @@
-﻿# 오프라인 번역기 설치 스크립트 (설치.bat 에서 실행)
+﻿# 영어 데스크(옛 이름: 오프라인 번역기) 설치 스크립트 (설치.bat 에서 실행)
 # - 프로그램 파일을 %LOCALAPPDATA%\OfflineTranslator 로 복사 (항상 같은 위치 → 재설치해도 이력·단어장 유지)
 # - 바탕화면·시작 메뉴 바로가기 생성 (아이콘, 작업 표시줄 묶음용 앱 ID 설정)
 Add-Type -AssemblyName System.Windows.Forms
-$title = '오프라인 번역기 설치'
+$title = '영어 데스크 설치'
 function Say([string]$msg, [string]$icon = 'Information') {
   [System.Windows.Forms.MessageBox]::Show($msg, $title, 'OK', $icon) | Out-Null
 }
@@ -28,7 +28,11 @@ try {
 # 3) 바로가기 (바탕화면, 시작 메뉴)
 $launcher = Join-Path $dst 'launcher.ps1'
 $psExe = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
-$lnkName = '오프라인 번역기.lnk'
+$lnkName = '영어 데스크.lnk'
+# 예전 이름의 바로가기 정리
+foreach ($d in @([Environment]::GetFolderPath('Desktop'), [Environment]::GetFolderPath('Programs'))) {
+  Remove-Item (Join-Path $d '오프라인 번역기.lnk') -Force -ErrorAction SilentlyContinue
+}
 $lnks = @((Join-Path ([Environment]::GetFolderPath('Desktop')) $lnkName),
           (Join-Path ([Environment]::GetFolderPath('Programs')) $lnkName))
 $ws = New-Object -ComObject WScript.Shell
@@ -102,12 +106,12 @@ public static class AppId
 
 Start-Process -FilePath $psExe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$launcher`"" -WindowStyle Hidden
 $appId = $null
-for ($i = 0; $i -lt 40 -and -not $appId; $i++) { Start-Sleep -Milliseconds 500; $appId = [AppId]::ForTitle('오프라인 번역기') }
+for ($i = 0; $i -lt 40 -and -not $appId; $i++) { Start-Sleep -Milliseconds 500; $appId = [AppId]::ForTitle('영어 데스크') }
 if ($appId) { foreach ($p in $lnks) { try { [AppId]::SetOnShortcut($p, $appId) } catch {} } }
 
 # 5) 완료 안내
 $msg = "설치가 완료되었습니다.`n`n" +
-       "• 바탕화면과 시작 메뉴에 '오프라인 번역기'가 생겼습니다.`n" +
+       "• 바탕화면과 시작 메뉴에 '영어 데스크'가 생겼습니다.`n" +
        "• 작업 표시줄에 고정하려면: 바탕화면 아이콘 우클릭 → 추가 옵션 표시 → 작업 표시줄에 고정`n" +
        "• 처음 한 번은 번역기 화면의 [번역 모델 다운로드]를 눌러 주세요 (인터넷 필요, 위·아래 칸 각각).`n" +
        "• 번역기가 켜져 있는 동안 다른 프로그램에서 글자 선택 후 Ctrl+Shift+Space 로 팝업 번역.`n`n" +

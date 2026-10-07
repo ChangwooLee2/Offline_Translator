@@ -25,7 +25,7 @@ using System.Windows.Forms;
 public static class TrWin
 {
     // window titles (Korean, as \u escapes)
-    public const string MainTitle  = "\uC624\uD504\uB77C\uC778 \uBC88\uC5ED\uAE30";   // offline translator
+    public const string MainTitle  = "\uC601\uC5B4 \uB370\uC2A4\uD06C";   // English Desk (window title = <title> of the app page)
     public const string PopupTitle = "\uBC88\uC5ED \uD31D\uC5C5";                       // translation popup
 
     delegate bool EnumProc(IntPtr h, IntPtr l);

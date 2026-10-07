@@ -1,7 +1,7 @@
 {
-  "name": "오프라인 번역기",
-  "short_name": "번역기",
-  "description": "한국어 ↔ 영어 번역기 · 오프라인 사전 · 이력/단어장 동기화",
+  "name": "영어 데스크",
+  "short_name": "영어 데스크",
+  "description": "한↔영 번역 · 오프라인 사전 · 데일리 업무 영어 학습 · 기기 간 동기화",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",

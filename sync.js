@@ -1,7 +1,8 @@
-// GitHub 동기화 — 이력·단어장을 비공개 저장소의 data.json 한 파일로 여러 기기에서 공유
+// GitHub 동기화 — 이력·단어장·학습 기록을 비공개 저장소의 data.json 한 파일로 여러 기기에서 공유
 // 저장소·토큰 설정은 각 기기 브라우저(localStorage)에만 보관되고, GitHub API(api.github.com)로만 전송됨
 (function () {
   const H_KEY = 'offline-translator-history', V_KEY = 'offline-translator-vocab';
+  const S_KEY = 'ed-study';                     // 데일리 학습 기록
   const T_KEY = 'offline-translator-tomb';      // 삭제 기록 {id: 삭제 시각} — 다른 기기에서 지운 항목이 되살아나지 않게
   const C_KEY = 'offline-translator-sync';      // {repo, token, path, last}
   const H_MAX = 1000, TOMB_DAYS = 365;
@@ -39,12 +40,14 @@
       tomb[drop.id] = Math.max(tomb[drop.id] || 0, stamp(drop));
     }
     const vocab = [...byWord.values()].sort((p, q) => q.t - p.t);
-    return { v: 1, history, vocab, tomb };
+    const study = unite(a.study, b.study).sort((p, q) => String(p.lessonId).localeCompare(String(q.lessonId)));
+    return { v: 1, history, vocab, study, tomb };
   }
 
-  const local = () => ({ history: read(H_KEY, []), vocab: read(V_KEY, []), tomb: read(T_KEY, {}) });
+  const local = () => ({ history: read(H_KEY, []), vocab: read(V_KEY, []), study: read(S_KEY, []), tomb: read(T_KEY, {}) });
   const same = (x, y) => JSON.stringify(x.history) === JSON.stringify(y.history) &&
-                         JSON.stringify(x.vocab) === JSON.stringify(y.vocab);
+                         JSON.stringify(x.vocab) === JSON.stringify(y.vocab) &&
+                         JSON.stringify(x.study || []) === JSON.stringify(y.study || []);
 
   // ---- UTF-8 ↔ base64 ----
   function b64encode(str) {
@@ -88,7 +91,7 @@
       // 파일이 없는 것인지, 저장소 자체가 없는 것인지 구분
       const repo = await gh(c, 'GET', '');
       if (!repo.ok) throw new Error(explain(repo.status));
-      return { data: { history: [], vocab: [], tomb: {} }, sha: null };
+      return { data: { history: [], vocab: [], study: [], tomb: {} }, sha: null };
     }
     if (!r.ok) throw new Error(explain(r.status));
     const j = await r.json();
@@ -122,6 +125,24 @@
          : /Windows/.test(ua) ? (location.protocol === 'file:' ? 'PC 설치판' : 'Windows') : /Mac/.test(ua) ? 'Mac' : 'web';
   }
 
+  // 저장소의 다른 JSON 파일 읽기 (학습 자료 등). 없으면 null
+  async function getJSON(path) {
+    const c = config();
+    if (!c || !c.repo || !c.token) throw new Error('동기화가 설정되지 않았습니다');
+    const r = await gh(c, 'GET', '/contents/' + path.split('/').map(encodeURIComponent).join('/'));
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error(explain(r.status));
+    const j = await r.json();
+    let text;
+    if (j.content && j.encoding === 'base64') text = b64decode(j.content);
+    else {
+      const b = await gh(c, 'GET', '/git/blobs/' + j.sha);
+      if (!b.ok) throw new Error(explain(b.status));
+      text = b64decode((await b.json()).content);
+    }
+    return JSON.parse(text);
+  }
+
   // ---- 동기화 실행 ----
   let running = null, again = false, timer = null;
   const listeners = new Set();
@@ -140,13 +161,13 @@
       const before = local();
       const { data: remote, sha } = await pull(c);
       const merged = merge(before, remote);
-      const remoteSame = sha && same(merged, { history: remote.history || [], vocab: remote.vocab || [] }) &&
+      const remoteSame = sha && same(merged, { history: remote.history || [], vocab: remote.vocab || [], study: remote.study || [] }) &&
                          JSON.stringify(merged.tomb) === JSON.stringify(remote.tomb || {});
       if (!remoteSame && !(await push(c, merged, sha))) continue;
       // 동기화하는 동안 이 기기에서 바뀐 내용도 잃지 않도록 한 번 더 합침
       const now = local();
       const final = merge(merged, now);
-      write(H_KEY, final.history); write(V_KEY, final.vocab); write(T_KEY, final.tomb);
+      write(H_KEY, final.history); write(V_KEY, final.vocab); write(S_KEY, final.study); write(T_KEY, final.tomb);
       if (!same(final, merged)) again = true;
       const cc = config(); if (cc) { cc.last = Date.now(); write(C_KEY, cc); }
       setState('ok', '동기화 완료');
@@ -216,6 +237,6 @@
   });
   window.addEventListener('online', () => { if (configured()) run(); });
 
-  window.Sync = { run, schedule, tomb, setup, disconnect, configured, config, shareLink, importFromHash,
+  window.Sync = { run, schedule, tomb, setup, getJSON, disconnect, configured, config, shareLink, importFromHash,
                   merge, state, onState: f => { listeners.add(f); f(state); }, onApplied: null };
 })();
