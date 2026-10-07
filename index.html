@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#1e293b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="번역기">
+<title>오프라인 번역기</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASISURBVHhe7ZpPaBRXHMdzzDFHD5mMxt1kNhYM6CGZKc0eoihibUFKDsFNZgItIlRKqUE8hHgQhODBkyjmIvUPIgUPSr3YXoRSCT0FGmgKgro7tlta2qCXLd+QXd58387Om83OzEviFz6QzJvZ9/t9573fvPnT1fVe7xWpwdKr3Xs9v5h3y1N5z5/rGG55Cr87UPIt7lML7fXKR3Kuv5T3/FrS5LzKMgzhGDKRWar25Dx/kYNMBdd/ZJbKuzim1ITOc56/KgWWKpVqZtMi5/m35YAywPWfcWyJK+9WJqRAMiQ3XZ7lGBNV9kOfqVQ5xsSEOScHkD2p1YIB9/Un3HmnEMVtkbiVCY41EeWmK2elzjvEpgzw/DmONRFtrM648wCfzlcDybTS5OW/GseJ4t9UYGsagH3rx4ni31RAHwOiCEs0bLsiW8OAQ+f/bCT5/fO3gbYdYcCNx/81kvz6+t+Btm1vwP7TbwJJ4n+xXRQfq4D+Biw8+LeRIEYCt29rA/jKYH/1h7RPmMQrRQv0NYCH/tytf6R9QJi2tAFI/udf3zWS4covIorbFNDPAAxzMXn8zYVPZFsZgCUuC2sA3k9EFLcpoIcBOMPitR6KOvN1RHFbFP0nvntqFJy5WAzaU+agUzQHRtVvpaMMEFd60L0f15SSB6K4LYr+w1drfQWnbYyCswxDOF9JUQYAmICzLt7pqZClAQ0s+5E5NBb+tFnFgHbRwgCMBsuuhk6LnWAAMAp286fNO8UAYFiO/LR5Zxlgy0+b8QyeO+8UuhkApFqg20uROnuK81LwnaDXGg0+bc7NvB7hznXAPDgpBd8JsGAKGADhTQwHkCnTL2t9+4pS8J0gxIDkCmE79B+/W7twcaH2+MkPAYpHJ6SE4tLUALO02p3WBxGRnFqp9X1wOFBA67p281spobg0NQDKz5SH856/JgWUMrtHz9Q+K53h3BvihOISagCEgrj+yUqTwBLn1Mp68ggSZzpMMIeTikNLAyBMh/zMm0tSgAmCOY9hjwALB8YDCV++ci3w/2anQaQBovAl18bLUxTJWOB+HouZMPaML9TMkc+lau+dPhdIGIXvp+e/BLZxUnGIZcBmhI64cxXu3H/YSPS331+sb8MVQdRmpoHWBvDwrw93jIJm29tBawO+/GY+kKh4pjEaRMEsPl4FrQ1oNdf5yoBawceroK0BBz/6OJAgaoHYzmsDbldFWwN4+GPI81KY1c400NYAnuMqamcaaGkAV3lVtTMNtDSg2Wrv2ElXgusAFHcaaGkAD/9Wt718pUDt4H1aoZ0BOLMs3keEiyUM4X1aoZ0BfH2PWuXx5RLCNt4vjPQMsJxZ7rwZGO7iPFdJhmtDnDqQmgF4+sqd64BRsL/gWBORaTkj3LkOmEP2MMeamPAmhgPIEqNgr5nmWDfHmZhUC2GKLHKMiQpuG5az1CSQ1DEs+5W5f6yHY0xcmHMYehxQ2vQOfXiEY0tNKIj4ZIWDSgOc+UyTrwvToa9gX+IAE2Yxk2EfJXzJZVjOWRTJjmM5s+tfiqVZ7bei/gewhoXMDRyqWAAAAABJRU5ErkJggg==">
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #ffffff; --text: #1d2330; --muted: #6b7280;
+    --border: #d9dde4; --accent: #2563eb; --accent-text: #ffffff; --warn: #b45309; --err: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15181e; --panel: #1e222a; --text: #e6e8ec; --muted: #9aa1ad;
+      --border: #333945; --accent: #4f8cff; --accent-text: #0b1020; --warn: #f0a94a; --err: #f07070;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); display: flex;
+    font: 15px/1.5 "Malgun Gothic", "Segoe UI", sans-serif; }
+  main { flex: 1; min-width: 0; height: 100%; margin: 0; padding: 8px 16px 12px;
+    display: flex; flex-direction: column;
+    --cl: calc((100% - 14px) * 0.5); }          /* 입력칸 폭 (JS가 비율 갱신) */
+  section { flex: 1 1 0; display: flex; flex-direction: column; min-height: 140px; }
+  /* 버튼 줄: 아래 입력칸/결과칸과 같은 폭으로 좌우 분할 (경계선을 끌면 함께 움직임) */
+  .bar { display: grid; grid-template-columns: minmax(0, var(--cl)) 14px minmax(0, 1fr); align-items: end; margin-bottom: 6px; }
+  .bar-l, .bar-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+  .bar-l { grid-column: 1; }
+  .bar-r { grid-column: 3; justify-content: flex-end; }
+  @media (max-width: 720px) {
+    .bar { grid-template-columns: 1fr; row-gap: 4px; }
+    .bar-r { grid-column: 1; }
+  }
+  .lang { font-weight: 700; font-size: 15px; }
+  button { font: inherit; font-size: 13px; border: 1px solid var(--border); background: var(--panel); color: var(--text);
+    border-radius: 7px; padding: 3px 12px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .spacer { flex: 1; }
+  .grid { flex: 1; display: grid; grid-template-columns: minmax(0, var(--cl)) 14px minmax(0, 1fr); min-height: 0; }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; row-gap: 8px; }
+    .grid .gutter { display: none; }
+  }
+
+  /* ---- 크기 조절 경계선 ---- */
+  .gutter { position: relative; flex: none; user-select: none; touch-action: none; }
+  .gutter::before { content: ''; position: absolute; background: transparent; transition: background .15s; }
+  .gutter::after { content: ''; position: absolute; border-radius: 3px; background: var(--border); transition: background .15s; }
+  .gutter:hover::after, .gutter.active::after { background: var(--accent); }
+  .gutter:hover::before, .gutter.active::before { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+  .gutter.x { cursor: col-resize; }
+  .gutter.x::before { top: 0; bottom: 0; left: 5px; width: 4px; border-radius: 2px; }
+  .gutter.x::after  { top: 50%; left: 5px; width: 4px; height: 36px; transform: translateY(-50%); }
+  .gutter.y { height: 16px; cursor: row-resize; }
+  .gutter.y::before { left: 0; right: 0; top: 6px; height: 4px; border-radius: 2px; }
+  .gutter.y::after  { left: 50%; top: 6px; height: 4px; width: 48px; transform: translateX(-50%); }
+  #gutterH { order: 1; width: 10px; cursor: col-resize; display: none; background: var(--bg); }
+  #gutterH::before { top: 0; bottom: 0; left: 3px; width: 4px; border-radius: 2px; }
+  #gutterH::after  { top: 50%; left: 3px; width: 4px; height: 36px; transform: translateY(-50%); }
+  body.h-open #gutterH { display: block; }
+  body.resizing, body.resizing * { user-select: none !important; }
+  body.resizing.rx, body.resizing.rx * { cursor: col-resize !important; }
+  body.resizing.ry, body.resizing.ry * { cursor: row-resize !important; }
+  textarea { width: 100%; height: 100%; min-height: 120px; resize: none; padding: 12px; font: inherit; font-size: 16px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--panel); color: var(--text); }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  textarea[readonly] { background: var(--bg); }
+  .status { font-size: 12px; color: var(--muted); }
+  .status.warn { color: var(--warn); } .status.err { color: var(--err); }
+  /* 공통 도구(팝업·초기화·이력)는 한→영 버튼 줄 오른쪽에 함께 배치 */
+  .hint { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .divider { width: 1px; height: 18px; background: var(--border); }
+  @media (max-width: 1150px) { .hint { display: none; } }
+
+  /* 이력 패널: 열면 오른쪽에 붙고 번역 화면은 그만큼 좁아짐 (가리지 않음) */
+  .side { order: 2; flex: 0 0 var(--hw, 380px); height: 100%; min-height: 0; overflow: hidden; display: none; flex-direction: column;
+    background: var(--panel); border-left: 1px solid var(--border); }
+  .side.open { display: flex; }
+  /* 창이 아주 좁을 때만 화면 위에 겹쳐 표시 */
+  @media (max-width: 760px) {
+    .side { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; z-index: 10; }
+    body.h-open #gutterH { display: none; }
+  }
+  .h-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .h-head strong { flex: 1; }
+  .search { margin: 10px 14px; padding: 6px 10px; font: inherit; font-size: 14px; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+  .list { flex: 1; min-height: 0; overflow-y: auto; padding: 0 14px 14px; }
+  .h-item { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; cursor: pointer; }
+  .h-item:hover { border-color: var(--accent); }
+  .h-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .h-src, .h-out { font-size: 13px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .h-out { color: var(--muted); }
+  .h-del { border: 0; background: none; color: var(--muted); padding: 0 4px; font-size: 14px; }
+  .h-del:hover { color: var(--err); }
+  .h-empty { color: var(--muted); font-size: 13px; text-align: center; margin-top: 30px; }
+
+  /* ---- 단어/문장 팝업 번역 ---- */
+  #pop { position: fixed; z-index: 50; max-width: min(460px, calc(100vw - 24px)); min-width: 160px;
+    background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.22); padding: 10px 12px 8px; display: none; }
+  #pop.show { display: block; animation: popIn .12s ease-out; max-height: 75vh; overflow-y: auto; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  #pop .p-dir { font-size: 11px; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+  #pop .p-src { font-size: 12px; color: var(--muted); max-height: 3.2em; overflow: hidden; margin-bottom: 4px; }
+  #pop .p-out { font-size: 16px; font-weight: 600; white-space: pre-wrap; max-height: 40vh; overflow-y: auto; }
+  #pop .p-out.loading { color: var(--muted); font-weight: 400; }
+  /* ---- 단어장 ---- */
+  .v-add { display: flex; gap: 6px; margin: 10px 14px 0; }
+  .v-add input { flex: 1; min-width: 0; padding: 6px 10px; font: inherit; font-size: 14px; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+  .v-count { font-size: 11px; color: var(--muted); margin: -4px 14px 6px; }
+  .v-word { font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: baseline; gap: 6px; }
+  .v-word:hover { color: var(--accent); }
+  .v-word .v-arrow { font-size: 11px; font-weight: 400; color: var(--muted); }
+  .v-mean { font-size: 14px; margin-top: 2px; border-radius: 4px; outline: none; white-space: pre-wrap; }
+  .v-mean, .v-ex, .v-dict { overflow-wrap: anywhere; }
+  .v-dict { margin-top: 6px; padding: 6px 8px 4px; border-radius: 6px; background: var(--bg); border: 1px solid var(--border); }
+  .v-dict .d-head { display: none; }
+  .v-dict .v-none { font-size: 12px; color: var(--muted); }
+  .v-mean:focus { background: var(--bg); box-shadow: 0 0 0 2px var(--accent); padding: 0 4px; }
+  .v-ex { font-size: 12px; color: var(--muted); margin-top: 4px; font-style: italic; }
+  /* 뜻 가리기: 마우스를 올리거나 클릭하면 보임 */
+  #vocab.hide-mean .v-mean:not(:focus) { color: transparent; background: var(--border); user-select: none; transition: color .15s, background .15s; }
+  #vocab.hide-mean .h-item:hover .v-mean { color: var(--text); background: transparent; }
+  #vocab .h-item { cursor: default; }
+
+  #pop .p-foot { display: flex; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+  #pop .p-foot button { font-size: 12px; padding: 1px 10px; }
+  .toggle { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; }
+
+  /* ---- 번역 엔진 표시 ---- */
+  .engine { font-size: 11px; border-radius: 999px; padding: 0 8px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+  .engine.local { color: #15803d; border-color: color-mix(in srgb, #15803d 45%, transparent); }
+  .engine.online { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }
+
+  /* ---- 동기화 버튼·패널 ---- */
+  #syncBtn .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--border); margin-right: 5px; vertical-align: 1px; }
+  #syncBtn.ok .dot { background: #16a34a; } #syncBtn.busy .dot { background: var(--accent); animation: blink 1s infinite; }
+  #syncBtn.err .dot { background: var(--err); }
+  @keyframes blink { 50% { opacity: .3; } }
+  a.tool { font-size: 13px; color: var(--muted); text-decoration: none; border: 1px solid var(--border); border-radius: 7px; padding: 3px 12px; background: var(--panel); white-space: nowrap; }
+  a.tool:hover { border-color: var(--accent); color: var(--text); }
+  .s-body { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 14px 20px; font-size: 13.5px; }
+  .s-body label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 3px; }
+  .s-body input[type=text], .s-body input[type=password] { width: 100%; padding: 7px 10px; font: inherit; font-size: 14px; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+  .s-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .s-state { margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); font-size: 13px; }
+  .s-state.err { color: var(--err); } .s-state.ok { color: #15803d; }
+  .s-body ol { padding-left: 20px; margin: 6px 0; } .s-body li { margin: 3px 0; }
+  .s-body h3 { font-size: 14px; margin: 18px 0 4px; }
+  .s-body .note { color: var(--muted); font-size: 12px; }
+  .s-body code { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: 12px; word-break: break-all; }
+  #qr { margin-top: 8px; } #qr img { width: 180px; height: 180px; image-rendering: pixelated; background: #fff; padding: 8px; border-radius: 8px; }
+
+  /* ---- 휴대폰: 한 방향씩 보여 주고 도구는 위 머리줄에 ---- */
+  #mtop { display: none; }
+  @media (max-width: 720px) {
+    body { font-size: 15px; }
+    main { padding: 6px 10px calc(10px + env(safe-area-inset-bottom)); }
+    #mtop { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
+    #mtop .tabs { display: flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    #mtop .tabs button { border: 0; border-radius: 0; padding: 6px 14px; font-size: 14px; font-weight: 700; }
+    #mtop .tabs button.on { background: var(--accent); color: var(--accent-text); }
+    #mtop .tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    #mtop .hint, #mtop .divider, #mtop #layoutReset { display: none; }
+    #gutterY { display: none; }
+    body.m-koen #enko, body.m-enko #koen { display: none; }
+    section { min-height: 0; }
+    .grid { grid-template-rows: 1fr 1fr; }
+    textarea { min-height: 0; font-size: 17px; }
+    body.m-koen #koen, body.m-enko #enko { flex-grow: 1 !important; }
+    button { padding: 5px 12px; }
+  }
+</style>
+</head>
+<body>
+<aside id="history" class="side">
+  <div class="h-head">
+    <strong>번역 이력</strong>
+    <button id="hExport" title="이력을 파일로 저장">내보내기</button>
+    <button id="hImport" title="저장한 이력 파일 불러오기">가져오기</button>
+    <input id="hFile" type="file" accept=".json,application/json" hidden>
+    <button id="hClear">전체 삭제</button>
+    <button id="hClose">닫기</button>
+  </div>
+  <input id="hSearch" class="search" type="search" placeholder="이력 검색">
+  <div id="hList" class="list"></div>
+</aside>
+
+<aside id="vocab" class="side">
+  <div class="h-head">
+    <strong>단어장</strong>
+    <label class="toggle" title="뜻을 가리고 외웠는지 확인 (마우스를 올리면 보임)"><input type="checkbox" id="vHide" autocomplete="off"> 뜻 가리기</label>
+    <button id="vExport" title="엑셀에서 열 수 있는 CSV 파일로 저장">내보내기</button>
+    <button id="vImport" title="내보내기로 만든 CSV 파일 불러오기">가져오기</button>
+    <input id="vFile" type="file" accept=".csv,text/csv" hidden>
+    <button id="vClear">전체 삭제</button>
+    <button id="vClose">닫기</button>
+  </div>
+  <div class="v-add">
+    <input id="vWord" placeholder="단어 직접 추가 (Enter) — 뜻은 자동 번역">
+    <button id="vAddBtn">추가</button>
+  </div>
+  <input id="vSearch" class="search" type="search" placeholder="단어장 검색">
+  <div class="v-count" id="vCount"></div>
+  <div id="vList" class="list"></div>
+</aside>
+
+<aside id="syncPanel" class="side">
+  <div class="h-head">
+    <strong>기기 간 동기화 (GitHub)</strong>
+    <button id="sClose">닫기</button>
+  </div>
+  <div class="s-body">
+    <p style="margin:0">이력과 단어장을 내 <b>비공개</b> GitHub 저장소의 <code>data.json</code>에 저장해 회사 PC·집 PC·휴대폰에서 같이 씁니다. 기기마다 처음 한 번만 설정하면 됩니다.</p>
+    <div id="sState" class="s-state">설정되지 않음</div>
+
+    <div id="sForm">
+      <label for="sRepo">저장소 (아이디/저장소이름)</label>
+      <input id="sRepo" type="text" autocomplete="off" spellcheck="false" placeholder="ChangwooLee2/translator-data">
+      <label for="sToken">토큰 (github_pat_로 시작)</label>
+      <input id="sToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+      <div class="s-row"><button id="sSave" class="primary">저장하고 동기화</button></div>
+    </div>
+
+    <div id="sConnected" hidden>
+      <div class="s-row">
+        <button id="sNow" class="primary">지금 동기화</button>
+        <button id="sShare" title="휴대폰 등 다른 기기를 같은 설정으로 연결">다른 기기 연결</button>
+        <button id="sOff">이 기기 연결 해제</button>
+      </div>
+      <div id="sShareBox" hidden>
+        <h3>다른 기기 연결</h3>
+        <p class="note" style="margin:0">휴대폰 카메라로 QR을 찍거나, 아래 링크를 다른 기기 브라우저에서 열면 토큰 입력 없이 연결됩니다. <b>링크에 토큰이 들어 있으니 다른 사람에게 보내지 마세요.</b></p>
+        <div id="qr"></div>
+        <div class="s-row"><button id="sCopyLink">연결 링크 복사</button></div>
+      </div>
+    </div>
+
+    <h3>토큰 만드는 법 (처음 한 번)</h3>
+    <ol>
+      <li>GitHub에서 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">새 토큰 만들기 (Fine-grained)</a> 열기</li>
+      <li>Token name: <code>translator</code>, Expiration: 1년 등 원하는 기간</li>
+      <li>Repository access: <b>Only select repositories</b> → <code>translator-data</code></li>
+      <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+      <li><b>Generate token</b> → 나온 토큰을 위 칸에 붙여넣기</li>
+    </ol>
+    <p class="note">이 토큰은 translator-data 저장소 하나만 읽고 쓸 수 있습니다. 토큰은 이 기기 브라우저에만 저장되고 GitHub(api.github.com)로만 전송됩니다. 공용 PC에서는 쓰고 나서 [연결 해제]를 누르세요.</p>
+    <p id="dlLink"><a href="download.html" target="_blank" rel="noopener">PC 설치판 받기 · 사용법 페이지 →</a></p>
+  </div>
+</aside>
+
+<div id="gutterH" class="gutter" title="끌어서 이력 창 폭 조절 · 더블클릭하면 원래 크기"></div>
+
+<main>
+  <div id="mtop">
+    <div class="tabs"><button id="tabKo" class="on">한→영</button><button id="tabEn">영→한</button></div>
+    <div class="tools"></div>
+  </div>
+  <template id="tools">
+    <span class="hint">경계선 드래그: 칸 크기 조절 · 더블클릭: 원래대로</span>
+    <span class="divider"></span>
+    <label class="toggle" title="단어 더블클릭 / Ctrl+클릭 / 문장 드래그 시 팝업 번역"><input type="checkbox" id="popOn" autocomplete="off"> 팝업 번역</label>
+    <button id="layoutReset" title="크기 초기화: 모든 칸 크기를 처음 상태로 (경계선을 더블클릭하면 그 경계선만 원래대로)">↺</button>
+    <button id="hOpen" title="번역 이력 (Ctrl+H)">이력 (0)</button>
+    <button id="vOpen" title="단어장 (Ctrl+J)">단어장 (0)</button>
+    <button id="syncBtn" title="이력·단어장을 GitHub로 기기 간 동기화"><span class="dot"></span><span class="lbl">동기화</span></button>
+  </template>
+  <section id="koen"></section>
+  <div id="gutterY" class="gutter y" title="끌어서 위아래 높이 조절 · 더블클릭하면 원래 크기"></div>
+  <section id="enko"></section>
+</main>
+
+<template id="pane">
+  <div class="bar">
+    <div class="bar-l">   <!-- 입력칸 위 -->
+      <span class="lang"></span>
+      <span class="engine" hidden></span>
+      <button class="download primary" hidden>번역 모델 다운로드</button>
+      <span class="status"></span>
+      <span class="spacer"></span>
+      <button class="clear" title="입력칸과 결과칸 비우기">지우기</button>
+    </div>
+    <div class="bar-r">   <!-- 결과칸 위 -->
+      <button class="save" title="이 칸의 원문과 번역을 이력에 저장 (Ctrl+S)">저장</button>
+      <button class="copy">결과 복사</button>
+    </div>
+  </div>
+  <div class="grid">
+    <textarea class="in"></textarea>
+    <div class="gutter x" title="끌어서 좌우 폭 조절 · 더블클릭하면 원래 크기"></div>
+    <textarea class="out" readonly placeholder="번역 결과"></textarea>
+  </div>
+</template>
+
+<script src="dict-lookup.js"></script>
+<script src="sync.js"></script>
+<script>
+// 다른 기기에서 보낸 연결 링크(#sync=…)로 열렸으면 설정부터 저장
+const syncImported = Sync.importFromHash();
+const NAMES = { ko: '한국어', en: '영어' };
+
+// ---- 이력 저장소 (이 기기 브라우저에 저장, 동기화를 켜면 GitHub로 공유) ----
+const H_KEY = 'offline-translator-history', H_MAX = 1000;
+const History = {
+  load() { try { return JSON.parse(localStorage.getItem(H_KEY)) || []; } catch { return []; } },
+  save(list) { try { localStorage.setItem(H_KEY, JSON.stringify(list.slice(0, H_MAX))); } catch {} },
+  upsert(entry) {
+    const list = this.load().filter(x => x.id !== entry.id);
+    list.unshift(entry);
+    this.save(list); renderHistory(); Sync.schedule();
+  },
+  remove(id) { this.save(this.load().filter(x => x.id !== id)); Sync.tomb(id); renderHistory(); },
+  clear() { Sync.tomb(this.load().map(x => x.id)); this.save([]); renderHistory(); }
+};
+const panes = {};
+
+// ---- 온라인 번역 (기기 내 번역이 없는 휴대폰 등에서만 사용) ----
+// Google 번역 공개 엔드포인트 → 실패 시 MyMemory. 처음 쓸 때 기기마다 한 번 확인받음
+const OnlineMT = (() => {
+  const OK_KEY = 'offline-translator-online-ok', subs = [];
+  const MAXQ = 1500;   // 한 번에 보내는 글자 수 (주소 길이 제한)
+  function chunks(text) {
+    if (text.length <= MAXQ) return [text];
+    const out = []; let cur = '';
+    for (const part of text.split(/(?<=[.!?。？！]\s+|다\.\s*)/)) {
+      if ((cur + part).length > MAXQ && cur) { out.push(cur); cur = ''; }
+      cur += part;
+      while (cur.length > MAXQ) { out.push(cur.slice(0, MAXQ)); cur = cur.slice(MAXQ); }
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
+  async function google(text, sl, tl) {
+    const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=' + sl + '&tl=' + tl + '&q=' + encodeURIComponent(text));
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    return (j[0] || []).map(x => x[0] || '').join('');
+  }
+  async function mymemory(text, sl, tl) {
+    const r = await fetch('https://api.mymemory.translated.net/get?langpair=' + sl + '|' + tl + '&q=' + encodeURIComponent(text));
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j.responseStatus && j.responseStatus !== 200) throw new Error(j.responseDetails || 'MyMemory 오류');
+    return j.responseData.translatedText;
+  }
+  async function translate(text, sl, tl) {
+    if (!navigator.onLine) throw new Error('인터넷에 연결되어 있지 않습니다');
+    const res = [];
+    for (const c of chunks(text)) {
+      try { res.push(await google(c, sl, tl)); }
+      catch { res.push(await mymemory(c, sl, tl)); }
+    }
+    return res.join(' ');
+  }
+  return {
+    translate,
+    allowed: () => { try { return localStorage.getItem(OK_KEY) === '1'; } catch { return false; } },
+    allow: () => { try { localStorage.setItem(OK_KEY, '1'); } catch {} subs.forEach(f => f()); },
+    onAllow: f => subs.push(f)
+  };
+})();
+
+function makePane(root, src, dst, placeholder) {
+  root.append(document.getElementById('pane').content.cloneNode(true));
+  const q = s => root.querySelector(s);
+  const inEl = q('.in'), outEl = q('.out'), statusEl = q('.status'), dlBtn = q('.download');
+  q('.lang').textContent = NAMES[src] + ' → ' + NAMES[dst];
+  inEl.placeholder = placeholder;
+  let translator = null, seq = 0, timer = null, lastSaved = '';
+  const engineEl = q('.engine');
+  const cache = new Map();   // 줄 단위 번역 캐시
+
+  // [저장] 버튼(또는 Ctrl+S)을 누를 때만 이력에 저장. 직전에 저장한 내용과 같으면 건너뜀
+  async function saveNow() {
+    if (timer) { clearTimeout(timer); timer = null; await translate(); }   // 입력 직후면 번역부터 마무리
+    const s = inEl.value.trim(), o = outEl.value.trim();
+    if (!s || !o) { setStatus('저장할 번역이 없습니다', 'warn'); return; }
+    const key = s + '\u0000' + o;
+    if (key === lastSaved) { setStatus('이미 저장했습니다'); return; }
+    History.upsert({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                     dir: src + dst, src: s, out: o, t: Date.now() });
+    lastSaved = key;
+    setStatus('이력에 저장했습니다');
+  }
+
+  const setStatus = (msg, kind) => {
+    statusEl.textContent = msg || '';
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  };
+
+  function useOnline() {
+    translator = { online: true, translate: t => OnlineMT.translate(t, src, dst) };
+    dlBtn.hidden = true;
+    engineEl.hidden = false; engineEl.className = 'engine online'; engineEl.textContent = '온라인';
+    engineEl.title = '온라인 번역(Google): 입력한 내용이 인터넷으로 전송됩니다';
+    setStatus(''); translate();
+  }
+  function offerOnline(reason) {
+    if (OnlineMT.allowed()) { useOnline(); return; }
+    setStatus(reason + ' 온라인 번역을 쓰려면 버튼을 누르세요 (입력 내용이 Google로 전송됨).', 'warn');
+    dlBtn.textContent = '온라인 번역 사용'; dlBtn.hidden = false; dlBtn.dataset.mode = 'online';
+  }
+  OnlineMT.onAllow(() => { if (!translator && dlBtn.dataset.mode === 'online') useOnline(); });
+
+  async function create() {
+    try {
+      translator = await Translator.create({
+        sourceLanguage: src, targetLanguage: dst,
+        monitor(m) {
+          m.addEventListener('downloadprogress', e => setStatus('모델 다운로드 중… ' + Math.round(e.loaded * 100) + '%'));
+        }
+      });
+      dlBtn.hidden = true;
+      engineEl.hidden = false; engineEl.className = 'engine local'; engineEl.textContent = '기기 내';
+      engineEl.title = 'Chrome 내장 번역: 입력한 내용이 이 기기 밖으로 나가지 않습니다';
+      setStatus('준비 완료');
+      translate();
+    } catch (e) {
+      setStatus('준비 실패: ' + e.message, 'err');
+      dlBtn.hidden = false;
+    }
+  }
+
+  async function translate() {
+    const text = inEl.value;
+    if (!translator) return;
+    if (!text.trim()) { outEl.value = ''; return; }
+    const my = ++seq;
+    try {
+      // 번역 엔진이 줄바꿈을 지우므로 줄 단위로 번역해 원문 줄 구조를 유지
+      const lines = text.split('\n'), outLines = [];
+      for (const line of lines) {
+        const [, lead, core, trail] = line.match(/^(\s*)([\s\S]*?)(\s*)$/);
+        if (!core) { outLines.push(line); continue; }
+        let tr = cache.get(core);
+        if (tr === undefined) {
+          tr = await translator.translate(core);
+          if (my !== seq) return;
+          if (cache.size > 3000) cache.clear();
+          cache.set(core, tr);
+        }
+        outLines.push(lead + tr + trail);
+      }
+      if (my === seq) outEl.value = outLines.join('\n');
+    } catch (e) {
+      if (my === seq) setStatus('번역 오류: ' + e.message, 'err');
+    }
+  }
+
+  inEl.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { timer = null; translate(); }, translator && translator.online ? 600 : 250);
+  });
+  dlBtn.addEventListener('click', () => {
+    if (dlBtn.dataset.mode === 'online') { OnlineMT.allow(); if (!translator) useOnline(); return; }
+    setStatus('모델 다운로드 시작…'); create();
+  });
+  q('.save').addEventListener('click', saveNow);
+  q('.clear').addEventListener('click', () => {
+    clearTimeout(timer); timer = null; seq++;
+    inEl.value = ''; outEl.value = ''; setStatus(''); inEl.focus();
+  });
+  q('.copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(outEl.value); }
+    catch { outEl.select(); document.execCommand('copy'); }
+    setStatus('복사했습니다');
+  });
+
+  (async () => {
+    // PC Chrome(138+)은 기기 내 번역, 그 외(휴대폰·다른 브라우저)는 온라인 번역
+    if (!('Translator' in self)) { offerOnline('이 브라우저에는 기기 내 번역 기능이 없습니다.'); return; }
+    let avail = 'unavailable';
+    try {   // 회사 정책 등으로 응답이 없으면 5초 뒤 포기
+      avail = await Promise.race([Translator.availability({ sourceLanguage: src, targetLanguage: dst }),
+                                  new Promise(r => setTimeout(() => r('timeout'), 5000))]);
+    } catch {}
+    if (avail === 'timeout') { offerOnline('기기 내 번역 기능이 응답하지 않습니다.'); return; }
+    if (avail === 'unavailable') offerOnline('이 기기에서는 기기 내 번역을 쓸 수 없습니다.');
+    else if (avail === 'available') create();
+    else { setStatus('처음 한 번 모델을 받아야 합니다 (인터넷 필요).', 'warn'); dlBtn.hidden = false; }
+  })();
+
+  // 이력 항목 불러오기
+  function loadEntry(e) {
+    clearTimeout(timer); timer = null; seq++;
+    inEl.value = e.src; outEl.value = e.out;
+    lastSaved = e.src + '\u0000' + e.out;   // 불러온 그대로 다시 저장하면 중복 방지
+    setStatus('이력에서 불러왔습니다'); inEl.focus();
+  }
+
+  panes[src + dst] = { inEl, loadEntry, save: saveNow, translator: () => translator };
+  return inEl;
+}
+
+const koIn = makePane(document.getElementById('koen'), 'ko', 'en', '한국어를 입력하세요');
+const enIn = makePane(document.getElementById('enko'), 'en', 'ko', 'Type English here');
+
+// 공통 도구를 한→영 결과칸 위에 배치: [설명] [저장] [결과 복사] | [팝업] [초기화] [이력] [단어장]
+{
+  const bar = document.querySelector('#koen .bar-r');
+  const tools = document.getElementById('tools').content.cloneNode(true);
+  bar.querySelector('.save').before(tools.querySelector('.hint'));
+  bar.append(...tools.childNodes);
+}
+
+// 휴대폰 폭에서는 도구 버튼을 위 머리줄로 옮기고, 한 번에 한 방향만 표시
+const toolNodes = [...document.querySelector('#koen .bar-r').children].filter(n => !n.matches('.save, .copy, .hint'));
+const mq = matchMedia('(max-width: 720px)');
+function placeTools() {
+  const bar = document.querySelector('#koen .bar-r');
+  if (mq.matches) document.querySelector('#mtop .tools').append(...toolNodes);
+  else bar.append(...toolNodes);
+}
+mq.addEventListener('change', placeTools); placeTools();
+function setTab(dir) {
+  document.body.classList.toggle('m-koen', dir === 'koen');
+  document.body.classList.toggle('m-enko', dir === 'enko');
+  document.getElementById('tabKo').classList.toggle('on', dir === 'koen');
+  document.getElementById('tabEn').classList.toggle('on', dir === 'enko');
+}
+document.getElementById('tabKo').addEventListener('click', () => { setTab('koen'); koIn.focus(); });
+document.getElementById('tabEn').addEventListener('click', () => { setTab('enko'); enIn.focus(); });
+setTab('koen');
+// 설치판(로컬 파일)으로 열렸으면 웹 사이트의 안내 페이지로 연결
+if (location.protocol === 'file:') document.querySelector('#dlLink a').href = 'https://changwoolee2.github.io/Offline_Translator/download.html';
+if (!mq.matches) koIn.focus();
+
+// ---- 이력 패널 ----
+const hPanel = document.getElementById('history'), hList = document.getElementById('hList'),
+      hSearch = document.getElementById('hSearch'), hOpen = document.getElementById('hOpen');
+
+function fmtTime(t) {
+  const d = new Date(t), now = new Date(), p = n => String(n).padStart(2, '0');
+  const hm = p(d.getHours()) + ':' + p(d.getMinutes());
+  return d.toDateString() === now.toDateString() ? '오늘 ' + hm
+    : d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + hm;
+}
+
+function renderHistory() {
+  const all = History.load();
+  hOpen.textContent = '이력 (' + all.length + ')';
+  const kw = hSearch.value.trim().toLowerCase();
+  const list = kw ? all.filter(x => (x.src + '\n' + x.out).toLowerCase().includes(kw)) : all;
+  hList.replaceChildren();
+  if (!list.length) {
+    const p = document.createElement('p'); p.className = 'h-empty';
+    p.textContent = kw ? '검색 결과가 없습니다' : '아직 저장된 이력이 없습니다';
+    hList.append(p); return;
+  }
+  for (const e of list) {
+    const item = document.createElement('div'); item.className = 'h-item';
+    item.title = '클릭하면 불러옵니다';
+    const meta = document.createElement('div'); meta.className = 'h-meta';
+    const left = document.createElement('span');
+    left.textContent = (e.dir === 'koen' ? '한→영' : '영→한') + ' · ' + fmtTime(e.t);
+    const del = document.createElement('button'); del.className = 'h-del'; del.textContent = '✕'; del.title = '삭제';
+    del.addEventListener('click', ev => { ev.stopPropagation(); History.remove(e.id); });
+    meta.append(left, del);
+    const s = document.createElement('div'); s.className = 'h-src'; s.textContent = e.src;
+    const o = document.createElement('div'); o.className = 'h-out'; o.textContent = e.out;
+    item.append(meta, s, o);
+    item.addEventListener('click', () => { setTab(e.dir); if (mq.matches) setSide(null); panes[e.dir]?.loadEntry(e); });
+    hList.append(item);
+  }
+}
+
+// 오른쪽 패널(이력 / 단어장)은 한 번에 하나만 열림
+function setSide(panel) {
+  document.querySelectorAll('.side').forEach(s => s.classList.toggle('open', s === panel));
+  document.body.classList.toggle('h-open', !!panel);
+  if (panel && !mq.matches) panel.querySelector('.search, input')?.focus();
+}
+function setHistoryOpen(open) {
+  if (open) setSide(hPanel);
+  else if (hPanel.classList.contains('open')) setSide(null);
+}
+hOpen.addEventListener('click', () => setHistoryOpen(!hPanel.classList.contains('open')));
+document.getElementById('hClose').addEventListener('click', () => setHistoryOpen(false));
+// 내보내기: 이력 전체를 JSON 파일로 다운로드
+document.getElementById('hExport').addEventListener('click', () => {
+  const list = History.load();
+  if (!list.length) { alert('내보낼 이력이 없습니다.'); return; }
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  const name = '번역이력_' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes()) + '.json';
+  const blob = new Blob([JSON.stringify(list, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+// 가져오기: 파일의 이력을 기존 이력에 합침 (같은 항목은 최신 것으로)
+const hFile = document.getElementById('hFile');
+document.getElementById('hImport').addEventListener('click', () => hFile.click());
+hFile.addEventListener('change', async () => {
+  const f = hFile.files[0]; hFile.value = '';
+  if (!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    const valid = (Array.isArray(data) ? data : []).filter(x =>
+      x && typeof x.id === 'string' && (x.dir === 'koen' || x.dir === 'enko') &&
+      typeof x.src === 'string' && typeof x.out === 'string' && typeof x.t === 'number');
+    if (!valid.length) { alert('불러올 수 있는 이력이 없습니다. 내보내기로 만든 파일인지 확인해 주세요.'); return; }
+    const map = new Map(History.load().map(x => [x.id, x]));
+    let added = 0;
+    for (const x of valid) {
+      const cur = map.get(x.id);
+      if (!cur) added++;
+      if (!cur || cur.t < x.t) map.set(x.id, { id: x.id, dir: x.dir, src: x.src, out: x.out, t: x.t });
+    }
+    History.save([...map.values()].sort((a, b) => b.t - a.t));
+    renderHistory(); Sync.schedule();
+    alert('이력 ' + valid.length + '개를 불러왔습니다 (새 항목 ' + added + '개).');
+  } catch {
+    alert('파일을 읽지 못했습니다. 내보내기로 만든 JSON 파일인지 확인해 주세요.');
+  }
+});
+
+document.getElementById('hClear').addEventListener('click', () => {
+  if (confirm('번역 이력을 모두 삭제할까요? 되돌릴 수 없습니다.')) History.clear();
+});
+hSearch.addEventListener('input', renderHistory);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !pop.classList.contains('show')) setSide(null);
+  if (e.ctrlKey && e.key.toLowerCase() === 'h') { e.preventDefault(); hOpen.click(); }
+});
+window.addEventListener('storage', e => { if (e.key === H_KEY) renderHistory(); });
+// Ctrl+S: 커서가 있는 칸(없으면 위 칸)을 이력에 저장
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    const sec = document.activeElement?.closest?.('section');
+    (sec && sec.id === 'enko' ? panes.enko : panes.koen).save();
+  }
+});
+
+// ---- 칸 크기 조절 (경계선 드래그) ----
+// 크기는 저장하지 않음: 창을 열 때마다 항상 아래 기본값으로 시작
+const LAYOUT_DEFAULT = { x: 0.5, y: 0.5, hw: 380 };
+const layout = { ...LAYOUT_DEFAULT };
+const mainEl = document.querySelector('main');
+const secTop = document.getElementById('koen'), secBot = document.getElementById('enko');
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+function applyLayout() {
+  mainEl.style.setProperty('--cl', `calc((100% - 14px) * ${layout.x})`);
+  secTop.style.flexGrow = layout.y;
+  secBot.style.flexGrow = 1 - layout.y;
+  document.body.style.setProperty('--hw', layout.hw + 'px');
+}
+
+function makeDraggable(gutter, axis, onMove, onReset) {
+  gutter.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    gutter.setPointerCapture(e.pointerId);
+    gutter.classList.add('active');
+    document.body.classList.add('resizing', axis === 'x' ? 'rx' : 'ry');
+    const move = ev => { onMove(ev); applyLayout(); };
+    const up = () => {
+      gutter.classList.remove('active');
+      document.body.classList.remove('resizing', 'rx', 'ry');
+      gutter.removeEventListener('pointermove', move);
+      gutter.removeEventListener('pointerup', up);
+      gutter.removeEventListener('pointercancel', up);
+    };
+    gutter.addEventListener('pointermove', move);
+    gutter.addEventListener('pointerup', up);
+    gutter.addEventListener('pointercancel', up);
+  });
+  gutter.addEventListener('dblclick', () => { onReset(); applyLayout(); });
+}
+
+// 입력칸 ↔ 결과칸 좌우 폭 (위아래 두 번역기가 함께 움직여 줄이 맞음)
+document.querySelectorAll('.grid .gutter.x').forEach(g => {
+  makeDraggable(g, 'x', e => {
+    const r = g.parentElement.getBoundingClientRect();
+    layout.x = clamp((e.clientX - r.left - 7) / (r.width - 14), 0.15, 0.85);
+  }, () => { layout.x = LAYOUT_DEFAULT.x; });
+});
+
+// 한→영 ↔ 영→한 위아래 높이
+const gutterY = document.getElementById('gutterY');
+makeDraggable(gutterY, 'y', e => {
+  const top = secTop.getBoundingClientRect().top, bottom = secBot.getBoundingClientRect().bottom;
+  const avail = bottom - top - gutterY.offsetHeight;
+  layout.y = clamp((e.clientY - top - gutterY.offsetHeight / 2) / avail, 0.15, 0.85);
+}, () => { layout.y = LAYOUT_DEFAULT.y; });
+
+// 번역 화면 ↔ 이력 창 폭
+makeDraggable(document.getElementById('gutterH'), 'x', e => {
+  layout.hw = Math.round(clamp(window.innerWidth - e.clientX - 5, 260, window.innerWidth * 0.6));
+}, () => { layout.hw = LAYOUT_DEFAULT.hw; });
+
+// 번역기 전용 창(주소창 없는 앱 창)이면 열 때 창 크기도 기본값으로
+const WINDOW_DEFAULT = { w: 1000, h: 620 };
+const isAppWindow = !window.toolbar.visible;
+function resetWindowSize() {
+  if (!isAppWindow) return;
+  try { window.resizeTo(WINDOW_DEFAULT.w, WINDOW_DEFAULT.h); } catch {}
+}
+
+document.getElementById('layoutReset').addEventListener('click', () => {
+  Object.assign(layout, LAYOUT_DEFAULT); applyLayout();
+  resetWindowSize();
+});
+applyLayout();
+resetWindowSize();
+
+// ---- 단어/문장 팝업 번역 ----
+// 더블클릭(단어) · Ctrl+클릭(단어) · 드래그 선택(문장) → 마우스 근처에 번역 팝업
+const pop = document.createElement('div');
+pop.id = 'pop';
+pop.innerHTML = '<div class="p-dir"></div><div class="p-src"></div><div class="p-dict"></div>' +
+  '<div class="d-sep p-mtlabel" hidden>기계 번역</div><div class="p-out"></div>' +
+  '<div class="p-foot"><button class="p-naver" hidden title="인터넷 연결 시 네이버 사전에서 자세히 보기">네이버 사전</button>' +
+  '<button class="p-vocab" title="단어와 뜻을 단어장에 저장">단어장 추가</button>' +
+  '<button class="p-copy">복사</button><button class="p-close">닫기</button></div>';
+document.body.append(pop);
+const popOn = document.getElementById('popOn');
+popOn.checked = false;   // 실행 시 항상 꺼진 상태로 시작 (필요할 때만 켜서 사용)
+const HANGUL = /[ㄱ-ㆎ가-힣]/;
+let popSeq = 0, popData = null;   // popData: 단어장 추가용 {word, meaning, example}
+
+function hidePop() { pop.classList.remove('show'); popSeq++; }
+
+function placePop(x, y) {
+  pop.style.left = '0px'; pop.style.top = '0px';
+  pop.classList.add('show');
+  const r = pop.getBoundingClientRect(), m = 12;
+  let left = x + 12, top = y + 18;
+  if (left + r.width > innerWidth - m) left = Math.max(m, innerWidth - m - r.width);
+  if (top + r.height > innerHeight - m) top = Math.max(m, y - r.height - 12);   // 아래 공간 부족하면 위로
+  pop.style.left = left + 'px'; pop.style.top = top + 'px';
+}
+
+async function showPop(text, x, y, context = '') {
+  text = text.trim();
+  if (!text || text.length > 3000) return;
+  const dir = HANGUL.test(text) ? 'koen' : 'enko';
+  if (!/[\p{L}]/u.test(text)) return;          // 숫자·기호만이면 무시
+  const my = ++popSeq;
+  popData = null;
+  const vBtn = pop.querySelector('.p-vocab');
+  vBtn.textContent = '단어장 추가'; vBtn.disabled = true;
+  vBtn.hidden = text.length > 100;             // 긴 문장은 단어장 대상 아님
+  pop.querySelector('.p-dir').textContent = dir === 'koen' ? '한국어 → 영어' : '영어 → 한국어';
+  pop.querySelector('.p-src').textContent = text;
+  const outEl = pop.querySelector('.p-out');
+
+  // 오프라인 사전 (단어·짧은 구일 때만) — 번역과 동시에 조회
+  const dictEl = pop.querySelector('.p-dict'), mtLabel = pop.querySelector('.p-mtlabel'), naver = pop.querySelector('.p-naver');
+  dictEl.replaceChildren(); mtLabel.hidden = true; naver.hidden = true;
+  let dictRes = null;
+  const dictDone = OfflineDict.lookup(text).then(res => {
+    if (my !== popSeq) return;
+    dictRes = res;
+    OfflineDict.render(dictEl, res);
+    mtLabel.hidden = !res;
+    naver.hidden = !res;
+    naver.onclick = () => window.open(OfflineDict.naverUrl(res ? res.word : text), '_blank');
+    if (pop.classList.contains('show')) placePop(x, y);
+  }).catch(() => {});
+  const t = panes[dir]?.translator();
+  if (!t) {
+    outEl.className = 'p-out loading';
+    outEl.textContent = '이 방향 번역 모델이 아직 준비되지 않았습니다. 해당 칸의 [번역 모델 다운로드]를 먼저 눌러 주세요.';
+    placePop(x, y);
+    await dictDone;                            // 사전 뜻은 번역 모델 없이도 표시
+    if (my === popSeq && dictRes) { popData = { word: dictRes.word, meaning: OfflineDict.summary(dictRes), example: context.trim() !== text ? context : '' }; vBtn.disabled = false; }
+    return;
+  }
+  outEl.className = 'p-out loading'; outEl.textContent = '번역 중…';
+  placePop(x, y);
+  try {
+    // 줄 구조 유지 (본문 번역과 동일한 방식)
+    const lines = text.split('\n'), res = [];
+    for (const line of lines) res.push(line.trim() ? await t.translate(line.trim()) : '');
+    if (my !== popSeq) return;
+    outEl.className = 'p-out'; outEl.textContent = res.join('\n');
+    await dictDone;
+    if (my !== popSeq) return;
+    // 단어장 뜻: 사전 뜻이 있으면 사전 뜻, 없으면 기계 번역
+    popData = { word: dictRes ? dictRes.word : text,
+                meaning: OfflineDict.summary(dictRes) || res.join(' ').trim(),
+                example: context.trim() !== text ? context : '' };
+    vBtn.disabled = false;
+    placePop(x, y);
+  } catch (e) {
+    if (my === popSeq) { outEl.className = 'p-out loading'; outEl.textContent = '번역 오류: ' + e.message; }
+  }
+}
+
+// 현재 선택된 글자 (입력칸·결과칸은 textarea 선택, 그 외는 일반 선택)
+function selectedText() {
+  const a = document.activeElement;
+  if (a && a.tagName === 'TEXTAREA') return a.value.slice(a.selectionStart, a.selectionEnd);
+  return String(window.getSelection());
+}
+
+// 선택한 글자가 들어 있는 줄 (단어장 예문용)
+function selectionContext() {
+  const a = document.activeElement;
+  if (a && a.tagName === 'TEXTAREA') {
+    const v = a.value, s = v.lastIndexOf('\n', a.selectionStart - 1) + 1;
+    let e = v.indexOf('\n', a.selectionEnd); if (e < 0) e = v.length;
+    return v.slice(s, e).trim();
+  }
+  const n = window.getSelection().anchorNode;
+  return (n?.parentElement?.textContent || '').trim().split('\n')[0];
+}
+
+// textarea 안에서 커서 위치의 단어를 선택
+function selectWordAtCaret(ta) {
+  const v = ta.value, i = ta.selectionStart, isW = c => c && /[\p{L}\p{N}'’-]/u.test(c);
+  let s = i, e = i;
+  while (s > 0 && isW(v[s - 1])) s--;
+  while (e < v.length && isW(v[e])) e++;
+  if (s === e) return '';
+  ta.setSelectionRange(s, e);
+  return v.slice(s, e);
+}
+
+document.addEventListener('mouseup', e => {
+  if (e.button !== 0 || !popOn.checked) return;
+  if (pop.contains(e.target) || e.target.closest('.gutter, button, input, label, [contenteditable]')) return;
+  if (document.body.classList.contains('resizing')) return;
+  const x = e.clientX, y = e.clientY, ctrl = e.ctrlKey;
+  setTimeout(() => {                       // 브라우저가 선택을 확정한 뒤 읽기
+    let text = selectedText();
+    if (!text.trim() && ctrl && e.target.tagName === 'TEXTAREA') text = selectWordAtCaret(e.target);
+    if (text.trim()) showPop(text, x, y, selectionContext());
+    else hidePop();
+  }, 0);
+});
+
+pop.querySelector('.p-close').addEventListener('click', hidePop);
+pop.querySelector('.p-vocab').addEventListener('click', () => {
+  if (!popData) return;
+  const b = pop.querySelector('.p-vocab');
+  b.textContent = Vocab.add(popData) ? '추가됨 ✓' : '이미 있음';
+  b.disabled = true;
+});
+pop.querySelector('.p-copy').addEventListener('click', async () => {
+  const s = pop.querySelector('.p-out').textContent;
+  try { await navigator.clipboard.writeText(s); } catch {}
+  pop.querySelector('.p-copy').textContent = '복사됨';
+  setTimeout(() => pop.querySelector('.p-copy').textContent = '복사', 1000);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' || (!e.ctrlKey && e.key.length === 1)) hidePop(); });
+document.addEventListener('mousedown', e => { if (!pop.contains(e.target)) hidePop(); });
+document.addEventListener('scroll', e => { if (!pop.contains(e.target)) hidePop(); }, true);
+window.addEventListener('resize', hidePop);
+popOn.addEventListener('change', () => { if (!popOn.checked) hidePop(); });
+renderHistory();
+
+// ---- 단어장 ----
+// popup.html(단축키 팝업)과 같은 저장소를 씀
+const V_KEY = 'offline-translator-vocab';
+const Vocab = {
+  load() { try { return JSON.parse(localStorage.getItem(V_KEY)) || []; } catch { return []; } },
+  save(list) { try { localStorage.setItem(V_KEY, JSON.stringify(list)); } catch {} renderVocab(); Sync.schedule(); },
+  // 같은 단어(대소문자 무시)가 있으면 추가하지 않고 false
+  add({ word, meaning, example = '' }) {
+    word = word.trim(); meaning = meaning.trim();
+    const list = this.load(), key = word.toLowerCase();
+    if (list.some(x => x.word.toLowerCase() === key)) return false;
+    list.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                   word, meaning, example: example.trim().slice(0, 300),
+                   lang: HANGUL.test(word) ? 'ko' : 'en', t: Date.now() });
+    this.save(list); return true;
+  },
+  update(id, patch) { this.save(this.load().map(x => x.id === id ? { ...x, ...patch, u: Date.now() } : x)); },
+  remove(id) { Sync.tomb(id); this.save(this.load().filter(x => x.id !== id)); },
+  clear() { Sync.tomb(this.load().map(x => x.id)); this.save([]); }
+};
+
+const vPanel = document.getElementById('vocab'), vList = document.getElementById('vList'),
+      vSearch = document.getElementById('vSearch'), vOpen = document.getElementById('vOpen'),
+      vWord = document.getElementById('vWord'), vHide = document.getElementById('vHide');
+
+function renderVocab() {
+  const all = Vocab.load();
+  vOpen.textContent = '단어장 (' + all.length + ')';
+  const kw = vSearch.value.trim().toLowerCase();
+  const list = kw ? all.filter(x => (x.word + '\n' + x.meaning + '\n' + (x.example || '')).toLowerCase().includes(kw)) : all;
+  document.getElementById('vCount').textContent = kw ? `${list.length}개 검색됨 / 전체 ${all.length}개` : `전체 ${all.length}개`;
+  vList.replaceChildren();
+  if (!list.length) {
+    const p = document.createElement('p'); p.className = 'h-empty';
+    p.textContent = kw ? '검색 결과가 없습니다' : '단어장이 비어 있습니다. 팝업 번역의 [단어장 추가]나 위 입력칸으로 추가하세요.';
+    vList.append(p); return;
+  }
+  for (const v of list) {
+    const item = document.createElement('div'); item.className = 'h-item';
+    const meta = document.createElement('div'); meta.className = 'h-meta';
+    const left = document.createElement('span'); left.textContent = (v.lang === 'ko' ? '한→영' : '영→한') + ' · ' + fmtTime(v.t);
+    const del = document.createElement('button'); del.className = 'h-del'; del.textContent = '✕'; del.title = '삭제';
+    del.addEventListener('click', () => Vocab.remove(v.id));
+    meta.append(left, del);
+    // 단어를 클릭하면 사전 전체 내용 펼치기/접기
+    const w = document.createElement('div'); w.className = 'v-word'; w.title = '클릭하면 사전 전체 내용 보기';
+    const wt = document.createElement('span'); wt.textContent = v.word;
+    const arrow = document.createElement('span'); arrow.className = 'v-arrow';
+    w.append(wt, arrow);
+    const dictBox = document.createElement('div'); dictBox.className = 'v-dict';
+    const setOpen = async open => {
+      arrow.textContent = open ? '▴ 사전 접기' : '▾ 사전';
+      if (open) vOpenSet.add(v.id); else vOpenSet.delete(v.id);
+      if (!open) { dictBox.remove(); return; }
+      const res = await OfflineDict.lookup(v.word).catch(() => null);
+      if (res) OfflineDict.render(dictBox, res);
+      else { dictBox.replaceChildren(); const n = document.createElement('div'); n.className = 'v-none'; n.textContent = '오프라인 사전에 없는 단어입니다.'; dictBox.append(n); }
+      const ex = item.querySelector('.v-ex');   // 예문이 있으면 예문 위에
+      if (ex) ex.before(dictBox); else item.append(dictBox);
+    };
+    w.addEventListener('click', () => setOpen(!vOpenSet.has(v.id)));
+    // 뜻은 클릭해서 바로 수정 (Enter 또는 다른 곳 클릭 시 저장)
+    const m = document.createElement('div'); m.className = 'v-mean'; m.textContent = v.meaning;
+    m.contentEditable = 'plaintext-only'; m.title = '클릭해서 뜻 수정';
+    m.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); m.blur(); } e.stopPropagation(); });
+    m.addEventListener('blur', () => { const nv = m.textContent.trim(); if (nv !== v.meaning) Vocab.update(v.id, { meaning: nv }); });
+    item.append(meta, w, m);
+    if (v.example) { const ex = document.createElement('div'); ex.className = 'v-ex'; ex.textContent = v.example; item.append(ex); }
+    vList.append(item);
+    setOpen(vOpenSet.has(v.id));   // 다시 그려도 펼친 상태 유지
+  }
+}
+const vOpenSet = new Set();   // 사전을 펼쳐 둔 단어 id
+
+// 단어 직접 추가: 뜻은 자동 번역
+async function addTypedWord() {
+  const word = vWord.value.trim();
+  if (!word) return;
+  const t = panes[HANGUL.test(word) ? 'koen' : 'enko']?.translator();
+  // 뜻: 오프라인 사전 우선, 없으면 기계 번역
+  let meaning = OfflineDict.summary(await OfflineDict.lookup(word).catch(() => null));
+  if (!meaning && t) { try { meaning = await t.translate(word); } catch {} }
+  if (Vocab.add({ word, meaning })) { vWord.value = ''; vSearch.value = ''; renderVocab(); }
+  else { vSearch.value = word; renderVocab(); alert('이미 단어장에 있는 단어입니다.'); }
+  vWord.focus();
+}
+document.getElementById('vAddBtn').addEventListener('click', addTypedWord);
+vWord.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addTypedWord(); } });
+
+vOpen.addEventListener('click', () => setSide(vPanel.classList.contains('open') ? null : vPanel));
+document.getElementById('vClose').addEventListener('click', () => setSide(null));
+vSearch.addEventListener('input', renderVocab);
+vHide.checked = false;
+vHide.addEventListener('change', () => vPanel.classList.toggle('hide-mean', vHide.checked));
+document.getElementById('vClear').addEventListener('click', () => {
+  if (confirm('단어장을 모두 삭제할까요? 되돌릴 수 없습니다. (먼저 내보내기를 해 두면 안전합니다)')) Vocab.clear();
+});
+
+// CSV 내보내기 (엑셀에서 한글이 깨지지 않도록 BOM 포함)
+const csvCell = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+document.getElementById('vExport').addEventListener('click', () => {
+  const list = Vocab.load();
+  if (!list.length) { alert('내보낼 단어가 없습니다.'); return; }
+  const rows = [['단어', '뜻', '예문', '추가일']].concat(list.map(v =>
+    [v.word, v.meaning, v.example || '', new Date(v.t).toLocaleString('sv-SE').slice(0, 16)]));
+  const csv = '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = '단어장_' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '.csv';
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+// CSV 가져오기: 첫 두 칸(단어, 뜻)은 필수, 세 번째 칸은 예문. 이미 있는 단어는 건너뜀
+function parseCsv(text) {
+  const rows = []; let row = [], cell = '', q = false;
+  text = text.replace(/^﻿/, '');
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') q = false;
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+const vFile = document.getElementById('vFile');
+document.getElementById('vImport').addEventListener('click', () => vFile.click());
+vFile.addEventListener('change', async () => {
+  const f = vFile.files[0]; vFile.value = '';
+  if (!f) return;
+  try {
+    let rows = parseCsv(await f.text()).filter(r => r[0] && r[0].trim());
+    if (rows.length && rows[0][0].trim() === '단어') rows = rows.slice(1);   // 머리글 줄
+    if (!rows.length) { alert('불러올 단어가 없습니다.'); return; }
+    let added = 0;
+    for (const r of rows.reverse()) if (Vocab.add({ word: r[0], meaning: r[1] || '', example: r[2] || '' })) added++;
+    alert(`${rows.length}개 중 ${added}개를 추가했습니다 (이미 있는 단어 ${rows.length - added}개는 건너뜀).`);
+  } catch {
+    alert('파일을 읽지 못했습니다. 내보내기로 만든 CSV 파일인지 확인해 주세요.');
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'j') { e.preventDefault(); vOpen.click(); }
+});
+window.addEventListener('storage', e => { if (e.key === V_KEY) { renderVocab(); Sync.schedule(); } });   // 단축키 팝업에서 추가 시 갱신
+renderVocab();
+
+// ---- 동기화 패널 ----
+const sPanel = document.getElementById('syncPanel'), syncBtn = document.getElementById('syncBtn'),
+      sState = document.getElementById('sState');
+const $id = id => document.getElementById(id);
+function ago(t) {
+  const s = Math.round((Date.now() - t) / 1000);
+  return s < 60 ? '방금' : s < 3600 ? Math.round(s / 60) + '분 전' : fmtTime(t);
+}
+function renderSync(st = Sync.state) {
+  const on = Sync.configured(), c = Sync.config();
+  $id('sForm').hidden = on; $id('sConnected').hidden = !on;
+  if (!on) $id('sShareBox').hidden = true;
+  syncBtn.className = on ? st.status : '';
+  const last = (st.at || (c && c.last)) ? ago(st.at || c.last) : '';
+  syncBtn.querySelector('.lbl').textContent = !on ? '동기화' : st.status === 'busy' ? '동기화 중' : st.status === 'err' ? '동기화 오류' : '동기화됨';
+  syncBtn.title = !on ? '이력·단어장을 GitHub로 기기 간 동기화 (설정 필요)' : (st.msg || '') + (last ? ' · 마지막 ' + last : '');
+  sState.className = 's-state' + (st.status === 'err' ? ' err' : st.status === 'ok' ? ' ok' : '');
+  sState.textContent = !on ? '설정되지 않음 — 아래 저장소와 토큰을 입력하세요'
+    : (st.status === 'err' ? '⚠ ' + st.msg : st.status === 'busy' ? '동기화 중…' : '연결됨: ' + c.repo + (last ? ' · 마지막 동기화 ' + last : ''));
+}
+Sync.onState(renderSync);
+Sync.onApplied = () => { renderHistory(); renderVocab(); };
+syncBtn.addEventListener('click', () => {
+  if (sPanel.classList.contains('open')) { setSide(null); return; }
+  setSide(sPanel); renderSync();
+  if (!Sync.configured()) $id('sRepo').value ||= 'ChangwooLee2/translator-data';
+});
+$id('sClose').addEventListener('click', () => setSide(null));
+$id('sSave').addEventListener('click', async () => {
+  try { await Sync.setup($id('sRepo').value, $id('sToken').value); $id('sToken').value = ''; }
+  catch (e) { sState.className = 's-state err'; sState.textContent = '⚠ ' + e.message; }
+  renderSync();
+});
+$id('sToken').addEventListener('keydown', e => { if (e.key === 'Enter') $id('sSave').click(); });
+$id('sNow').addEventListener('click', () => Sync.run());
+$id('sOff').addEventListener('click', () => {
+  if (confirm('이 기기의 동기화 연결을 해제할까요?\n(이 기기의 이력·단어장과 GitHub의 data.json은 그대로 남습니다)')) { Sync.disconnect(); renderSync(); }
+});
+// 다른 기기 연결: 웹 주소 + #sync=… 링크와 QR
+const WEB_URL = location.protocol === 'file:' ? 'https://changwoolee2.github.io/Offline_Translator/' : location.origin + location.pathname;
+function loadQrLib() {
+  if (window.qrcode) return Promise.resolve();
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'qrcode.js';
+    s.onload = res; s.onerror = rej; document.head.append(s);
+  });
+}
+$id('sShare').addEventListener('click', async () => {
+  const box = $id('sShareBox');
+  box.hidden = !box.hidden;
+  if (box.hidden) return;
+  const link = Sync.shareLink(WEB_URL), q = $id('qr');
+  q.textContent = 'QR 만드는 중…';
+  try {
+    await loadQrLib();
+    const qr = qrcode(0, 'L'); qr.addData(link); qr.make();
+    q.innerHTML = qr.createImgTag(4, 0);
+  } catch { q.textContent = '(QR을 만들지 못했습니다. 아래 링크 복사를 이용하세요)'; }
+});
+$id('sCopyLink').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(Sync.shareLink(WEB_URL)); $id('sCopyLink').textContent = '복사됨 ✓'; }
+  catch { prompt('이 링크를 복사하세요', Sync.shareLink(WEB_URL)); }
+  setTimeout(() => $id('sCopyLink').textContent = '연결 링크 복사', 1500);
+});
+setInterval(() => renderSync(), 30000);   // '방금/몇 분 전' 표시 갱신
+if (Sync.configured()) Sync.run();
+if (syncImported) { setSide(sPanel); renderSync(); }
+
+// ---- 휴대폰: 길게 눌러 선택하면 팝업 번역 (마우스 이벤트가 없으므로 선택 변화로 감지) ----
+let touchSel = null, lastPointer = 'mouse';
+document.addEventListener('pointerdown', e => { lastPointer = e.pointerType; }, true);
+function onTouchSelection() {
+  if (!popOn.checked || lastPointer !== 'touch') return;
+  clearTimeout(touchSel);
+  touchSel = setTimeout(() => {
+    const text = selectedText();
+    if (!text.trim()) return;
+    const a = document.activeElement;
+    let r;
+    if (a && a.tagName === 'TEXTAREA') { const b = a.getBoundingClientRect(); r = { left: b.left + 10, bottom: b.top + 40 }; }
+    else { const sel = getSelection(); r = sel.rangeCount ? sel.getRangeAt(0).getBoundingClientRect() : { left: 20, bottom: 80 }; }
+    showPop(text, r.left, r.bottom + 30, selectionContext());
+  }, 700);
+}
+document.addEventListener('selectionchange', onTouchSelection);
+document.querySelectorAll('textarea').forEach(t => t.addEventListener('selectionchange', onTouchSelection));
+
+// ---- 오프라인에서도 열리도록 (웹 주소로 열었을 때만) ----
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Ctrl+↑ / Ctrl+↓ 로 위아래 입력칸 이동
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'ArrowUp') { e.preventDefault(); koIn.focus(); }
+  if (e.ctrlKey && e.key === 'ArrowDown') { e.preventDefault(); enIn.focus(); }
+});
+</script>
+</body>
+</html>

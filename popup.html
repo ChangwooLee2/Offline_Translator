@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>번역 팝업</title>
+<style>
+  :root {
+    --bg: #ffffff; --soft: #f5f6f8; --text: #1d2330; --muted: #6b7280;
+    --border: #d9dde4; --accent: #2563eb; --err: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1e222a; --soft: #15181e; --text: #e6e8ec; --muted: #9aa1ad;
+      --border: #333945; --accent: #4f8cff; --err: #f07070;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 "Malgun Gothic", "Segoe UI", sans-serif; }
+  #box { padding: 10px 14px 10px; }
+  .dir { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 2px; }
+  .src { font-size: 12px; color: var(--muted); max-height: 4.5em; overflow: hidden; white-space: pre-wrap; margin-bottom: 6px; }
+  .out { font-size: 16px; font-weight: 600; white-space: pre-wrap; word-break: break-word; }
+  .out.msg { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .out.err { color: var(--err); }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .foot span { font-size: 11px; color: var(--muted); }
+  button { font: inherit; font-size: 12px; border: 1px solid var(--border); background: var(--soft); color: var(--text);
+    border-radius: 6px; padding: 2px 12px; cursor: pointer; margin-left: 6px; }
+  button:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div id="box">
+  <div class="dir" id="dir"></div>
+  <div class="src" id="src"></div>
+  <div id="dict"></div>
+  <div class="d-sep" id="mtlabel" hidden>기계 번역</div>
+  <div class="out msg" id="out">번역 중…</div>
+  <div class="foot">
+    <span>Esc 또는 다른 곳 클릭 시 닫힘</span>
+    <div><button id="naver" hidden title="인터넷 연결 시 네이버 사전에서 자세히 보기">네이버 사전</button><button id="vocab" disabled title="단어와 뜻을 번역기 단어장에 저장">단어장 추가</button><button id="copy">복사</button><button id="close">닫기</button></div>
+  </div>
+</div>
+
+<script src="dict-lookup.js"></script>
+<script>
+// 단축키 스크립트가 #{t: 선택 글자, x, y: 마우스 위치} 형태로 넘겨줌
+const P = (() => { try { return JSON.parse(decodeURIComponent(location.hash.slice(1))); } catch { return {}; } })();
+const HANGUL = /[ㄱ-ㆎ가-힣]/;
+const $ = id => document.getElementById(id);
+const outEl = $('out');
+
+function msg(text, cls) { outEl.className = 'out ' + (cls || 'msg'); outEl.textContent = text; fit(); }
+
+// 내용 높이에 맞게 창 크기 조절 + 마우스 근처, 화면 안쪽에 배치
+function fit() {
+  const W = 460;
+  const frameH = Math.max(0, outerHeight - innerHeight);
+  const H = Math.min(document.getElementById('box').scrollHeight + frameH + 2, Math.round(screen.availHeight * 0.7));
+  const L = screen.availLeft || 0, T = screen.availTop || 0;
+  let x = (P.x ?? screenX) + 12, y = (P.y ?? screenY) + 18;
+  if (x + W > L + screen.availWidth) x = L + screen.availWidth - W - 8;
+  if (y + H > T + screen.availHeight) y = Math.max(T + 8, (P.y ?? y) - H - 12);
+  try { resizeTo(W, H); moveTo(x, y); } catch {}
+}
+
+async function run() {
+  const text = (P.t || '').trim();
+  if (!text) { $('dir').textContent = '선택된 글자 없음'; msg('글자를 드래그로 선택한 뒤 Ctrl+Shift+Space를 눌러 주세요.'); return; }
+  const [src, dst] = HANGUL.test(text) ? ['ko', 'en'] : ['en', 'ko'];
+  $('dir').textContent = src === 'ko' ? '한국어 → 영어' : '영어 → 한국어';
+  $('src').textContent = text;
+  fit();
+
+  // 오프라인 사전 (단어·짧은 구일 때만)
+  const dictRes = await OfflineDict.lookup(text).catch(() => null);
+  if (dictRes) {
+    OfflineDict.render($('dict'), dictRes);
+    $('mtlabel').hidden = false;
+    $('naver').hidden = false;
+    $('naver').onclick = () => window.open(OfflineDict.naverUrl(dictRes.word), '_blank');
+    if (text.length <= 100) { vocabData = { word: dictRes.word, meaning: OfflineDict.summary(dictRes) }; $('vocab').disabled = false; }
+    fit();
+  }
+
+  if (!('Translator' in self)) { msg('이 Chrome은 내장 번역 기능을 지원하지 않습니다.', 'err'); return; }
+  try {
+    const avail = await Translator.availability({ sourceLanguage: src, targetLanguage: dst });
+    if (avail !== 'available') {
+      msg('이 방향 번역 모델이 아직 없습니다. 번역기 창에서 [번역 모델 다운로드]를 먼저 눌러 주세요.', 'err');
+      return;
+    }
+    const t = await Translator.create({ sourceLanguage: src, targetLanguage: dst });
+    // 줄 구조 유지
+    const res = [];
+    for (const line of text.split('\n')) res.push(line.trim() ? await t.translate(line.trim()) : '');
+    outEl.className = 'out'; outEl.textContent = res.join('\n');
+    if (text.length > 100) $('vocab').hidden = true;
+    else if (!vocabData) { vocabData = { word: text, meaning: res.join(' ').trim() }; $('vocab').disabled = false; }
+    fit();
+  } catch (e) {
+    msg('번역 오류: ' + e.message, 'err');
+  }
+}
+
+// 단어장 추가: 번역기 창과 같은 저장소(localStorage)를 씀
+const V_KEY = 'offline-translator-vocab';
+let vocabData = null;
+$('vocab').addEventListener('click', () => {
+  if (!vocabData) return;
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(V_KEY)) || []; } catch {}
+  const key = vocabData.word.toLowerCase();
+  if (list.some(x => x.word.toLowerCase() === key)) { $('vocab').textContent = '이미 있음'; }
+  else {
+    list.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                   word: vocabData.word, meaning: vocabData.meaning, example: '',
+                   lang: HANGUL.test(vocabData.word) ? 'ko' : 'en', t: Date.now() });
+    try { localStorage.setItem(V_KEY, JSON.stringify(list)); $('vocab').textContent = '추가됨 ✓'; }
+    catch { $('vocab').textContent = '저장 실패'; }
+  }
+  $('vocab').disabled = true;
+});
+
+let copying = false;
+$('copy').addEventListener('click', async () => {
+  copying = true;
+  try { await navigator.clipboard.writeText(outEl.textContent); $('copy').textContent = '복사됨'; } catch {}
+  setTimeout(() => { copying = false; }, 300);
+});
+$('close').addEventListener('click', () => window.close());
+document.addEventListener('keydown', e => { if (e.key === 'Escape') window.close(); });
+// 다른 곳을 클릭해 포커스를 잃으면 닫힘
+window.addEventListener('blur', () => setTimeout(() => { if (!document.hasFocus() && !copying) window.close(); }, 150));
+
+run();
+</script>
+</body>
+</html>

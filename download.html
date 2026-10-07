@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오프라인 번역기 — 받기 · 사용법</title>
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* Layout: one narrow column — identity + download card up top, then install steps, usage, notes.
+     Palette taken from the app icon (blue "가" card over navy "A" card). */
+  :root {
+    --bg: #f3f5f9;
+    --surface: #ffffff;
+    --ink: #172033;
+    --muted: #5d6779;
+    --line: #d8dee8;
+    --accent: #2563eb;
+    --accent-ink: #ffffff;
+    --navy: #1e293b;
+    --key-bg: #eef1f6;
+    --ok: #15803d;
+    --err: #b91c1c;
+    --font-body: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    --font-mono: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11151c; --surface: #1a1f29; --ink: #e7eaf0; --muted: #9aa3b2; --line: #2d3442;
+      --accent: #5b8cff; --accent-ink: #0b1020; --navy: #0b1020; --key-bg: #252c39; --ok: #4ade80; --err: #f87171;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11151c; --surface: #1a1f29; --ink: #e7eaf0; --muted: #9aa3b2; --line: #2d3442;
+    --accent: #5b8cff; --accent-ink: #0b1020; --navy: #0b1020; --key-bg: #252c39; --ok: #4ade80; --err: #f87171;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.7 var(--font-body); }
+  .wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 56px; display: grid; gap: 36px; }
+
+  header { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+  header img { width: 64px; height: 64px; }
+  h1 { font-size: 30px; line-height: 1.25; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .lede { margin: 4px 0 0; color: var(--muted); }
+
+  .get { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px;
+    display: grid; grid-template-columns: 1fr auto; gap: 16px 20px; align-items: center; }
+  .get .file { font-family: var(--font-mono); font-size: 14px; word-break: break-all; }
+  .get .meta { color: var(--muted); font-size: 13px; }
+  .btn { font: inherit; font-weight: 700; font-size: 15px; border: 0; border-radius: 10px; cursor: pointer;
+    padding: 12px 22px; background: var(--accent); color: var(--accent-ink); white-space: nowrap; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .btn:disabled { opacity: .6; cursor: default; filter: none; }
+  #status { grid-column: 1 / -1; margin: 0; font-size: 13px; min-height: 1.7em; color: var(--muted); }
+  #status.ok { color: var(--ok); } #status.err { color: var(--err); }
+
+  h2 { font-size: 18px; margin: 0 0 12px; text-wrap: balance; }
+  section > p { margin: 0 0 10px; }
+
+  ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: s; }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+  ol.steps li::before { content: counter(s); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--navy); color: #fff; font-weight: 700; font-size: 14px; line-height: 1; }
+  ol.steps li > div { min-width: 0; padding-top: 2px; }
+  .sub { color: var(--muted); font-size: 13.5px; }
+
+  code, kbd { font-family: var(--font-mono); font-size: 13px; }
+  code { background: var(--key-bg); border-radius: 5px; padding: 1px 6px; word-break: break-all; }
+  kbd { background: var(--key-bg); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 6px; white-space: nowrap; }
+
+  .table { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 460px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-size: 12px; letter-spacing: .04em; color: var(--muted); font-weight: 500; }
+  td:first-child { white-space: nowrap; }
+
+  ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  footer { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 24px; }
+    .get { grid-template-columns: 1fr; }
+    .btn { width: 100%; }
+  }
+</style>
+<style>
+  body { margin: 0; }
+  a { color: var(--accent); }
+  a.btn { display: inline-block; text-align: center; text-decoration: none; }
+  .wrap { gap: 28px; }
+  .wrap > * { min-width: 0; }
+  .get .file.plain { font-family: var(--font-body); font-weight: 700; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img alt="" src="icon-192.png">
+    <div>
+      <h1>오프라인 번역기</h1>
+      <p class="lede">한국어 ↔ 영어. PC Chrome에서는 내장 번역 모델로 기기 안에서만 번역하고, 휴대폰에서는 온라인 번역을 씁니다. 이력과 단어장은 GitHub로 모든 기기에서 공유됩니다.</p>
+    </div>
+  </header>
+
+  <div class="get">
+    <div>
+      <div class="file plain">웹에서 바로 쓰기</div>
+      <div class="meta">설치 없이 회사 PC · 집 PC · 휴대폰 어디서나</div>
+    </div>
+    <a class="btn" href="./">번역기 열기</a>
+  </div>
+
+  <div class="get">
+    <div>
+      <div class="file">OfflineTranslator_setup.zip</div>
+      <div class="meta"><span id="zipSize">약 4MB</span> · PC 설치판 · Windows 10/11, Chrome 138 이상<br>다른 프로그램에서 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> 팝업 번역이 필요할 때</div>
+    </div>
+    <a class="btn" href="setup/OfflineTranslator_setup.zip" download>설치 파일 받기</a>
+  </div>
+
+  <section>
+    <h2>어디서 무엇으로 번역되나</h2>
+    <div class="table">
+      <table>
+        <thead><tr><th>기기</th><th>번역 방식</th><th>입력 내용</th></tr></thead>
+        <tbody>
+          <tr><td>PC Chrome 138+ (웹·설치판)</td><td>Chrome 내장 번역 <b>기기 내</b></td><td>PC 밖으로 나가지 않음</td></tr>
+          <tr><td>휴대폰 · 다른 브라우저</td><td>온라인 번역 (Google, 실패 시 MyMemory)</td><td>번역 서버로 전송됨</td></tr>
+          <tr><td>단어 사전 (모든 기기)</td><td>내장 오프라인 사전</td><td>전송 없음</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:8px">번역 칸 옆 표시로 구분됩니다: <b style="color:var(--ok)">기기 내</b> / <b style="color:#b45309">온라인</b>. 온라인 번역은 기기마다 처음 한 번 확인 후에만 켜집니다. 회사 기밀 문장은 PC Chrome에서 '기기 내' 표시를 확인하고 번역하세요.</p>
+  </section>
+
+  <section>
+    <h2>휴대폰에 앱처럼 추가</h2>
+    <ol class="steps">
+      <li><div>휴대폰 브라우저로 이 사이트의 <a href="./">번역기</a>를 엽니다.</div></li>
+      <li><div><b>Android Chrome</b>: 오른쪽 위 ⋮ → <b>홈 화면에 추가</b> (또는 '앱 설치')<br><b>iPhone Safari</b>: 공유 버튼 → <b>홈 화면에 추가</b></div></li>
+      <li><div>위쪽 [한→영] [영→한]으로 방향을 바꿉니다. [팝업 번역]을 켜고 글자를 길게 눌러 선택하면 사전·번역 팝업이 뜹니다.</div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>이력·단어장 동기화 (GitHub)</h2>
+    <ol class="steps">
+      <li><div>PC 번역기에서 <b>[동기화]</b> 버튼 → 저장소 <code>ChangwooLee2/translator-data</code>와 토큰 입력 → <b>저장하고 동기화</b><div class="sub">토큰 만드는 법은 동기화 창 아래에 있습니다. 비공개 저장소 하나만 읽고 쓰는 토큰입니다.</div></div></li>
+      <li><div>다른 기기 연결: 동기화 창의 <b>[다른 기기 연결]</b> → 휴대폰으로 QR 촬영 (또는 링크 복사 후 다른 PC에서 열기)</div></li>
+      <li><div>이후에는 저장·단어장 추가·삭제할 때와 번역기 화면으로 돌아올 때 자동으로 맞춰집니다.</div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>PC 설치판</h2>
+    <ol class="steps">
+      <li><div>받은 zip 파일의 압축을 모두 풉니다.</div></li>
+      <li><div><code>설치.bat</code>을 더블클릭합니다.<div class="sub">바탕화면과 시작 메뉴에 '오프라인 번역기'가 생깁니다. 설치 위치는 <code>%LOCALAPPDATA%\OfflineTranslator</code>입니다.</div></div></li>
+      <li><div>처음 한 번은 번역기 화면의 <b>[번역 모델 다운로드]</b>를 누릅니다 (위·아래 칸 각각, 이때만 인터넷 필요).</div></li>
+      <li><div>설치판도 [동기화]를 설정하면 웹·휴대폰과 같은 이력·단어장을 씁니다.<div class="sub">설치판과 웹 버전은 브라우저 저장 공간이 서로 달라서, 동기화를 켜야 내용이 이어집니다.</div></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>쓰는 법</h2>
+    <div class="table">
+      <table>
+        <thead><tr><th>동작</th><th>방법</th></tr></thead>
+        <tbody>
+          <tr><td>문장 번역</td><td>위 칸에 한국어, 아래 칸에 영어를 입력하면 바로 번역됩니다 (휴대폰은 탭으로 전환).</td></tr>
+          <tr><td>단어·문장 팝업</td><td>[팝업 번역]을 켜고 단어 더블클릭, <kbd>Ctrl</kbd>+클릭, 문장 드래그 (휴대폰: 길게 눌러 선택)</td></tr>
+          <tr><td>다른 프로그램에서</td><td>PC 설치판 실행 중 글자 선택 후 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd></td></tr>
+          <tr><td>오프라인 사전</td><td>단어 팝업에 품사별 사전 뜻 (영→한 약 8만 5천, 한→영 약 12만 단어)</td></tr>
+          <tr><td>이력</td><td>[저장] 또는 <kbd>Ctrl</kbd>+<kbd>S</kbd>로 저장, <kbd>Ctrl</kbd>+<kbd>H</kbd>로 보기</td></tr>
+          <tr><td>단어장</td><td>팝업의 [단어장 추가], <kbd>Ctrl</kbd>+<kbd>J</kbd>로 보기, CSV로 내보내기</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>알아둘 점</h2>
+    <ul class="notes">
+      <li>웹 버전은 한 번 열어 두면 인터넷 없이도 화면과 사전이 열립니다. 업데이트는 다시 접속하면 자동 반영됩니다.</li>
+      <li>회사 방화벽이 <code>github.io</code>를 막으면 회사에서는 PC 설치판을 쓰세요. 동기화는 <code>api.github.com</code> 접속이 필요합니다.</li>
+      <li>회사 PC에서 받은 zip이 보안 프로그램(DRM)으로 암호화되면 압축이 풀리지 않을 수 있습니다. 이때는 탐색기로 압축을 풀어 보세요.</li>
+      <li>공용 PC에서는 사용 후 동기화 창의 [이 기기 연결 해제]를 누르세요.</li>
+    </ul>
+  </section>
+
+  <footer>
+    사전 데이터: Wiktionary (kaikki.org 추출본, CC BY-SA 4.0), kengdic (MPL 2.0). 사전 뜻 중 '참고' 표시는 kengdic 데이터로 일부 부정확할 수 있습니다.
+  </footer>
+</div>
+</body>
+</html>
