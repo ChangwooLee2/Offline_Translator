@@ -188,9 +188,6 @@
 <aside id="history" class="side">
   <div class="h-head">
     <strong>번역 이력</strong>
-    <button id="hExport" title="이력을 파일로 저장">내보내기</button>
-    <button id="hImport" title="저장한 이력 파일 불러오기">가져오기</button>
-    <input id="hFile" type="file" accept=".json,application/json" hidden>
     <button id="hClear">전체 삭제</button>
     <button id="hClose">닫기</button>
   </div>
@@ -202,9 +199,6 @@
   <div class="h-head">
     <strong>단어장</strong>
     <label class="toggle" title="뜻을 가리고 외웠는지 확인 (마우스를 올리면 보임)"><input type="checkbox" id="vHide" autocomplete="off"> 뜻 가리기</label>
-    <button id="vExport" title="엑셀에서 열 수 있는 CSV 파일로 저장">내보내기</button>
-    <button id="vImport" title="내보내기로 만든 CSV 파일 불러오기">가져오기</button>
-    <input id="vFile" type="file" accept=".csv,text/csv" hidden>
     <button id="vClear">전체 삭제</button>
     <button id="vClose">닫기</button>
   </div>
@@ -219,45 +213,57 @@
 
 <aside id="syncPanel" class="side">
   <div class="h-head">
-    <strong>기기 간 동기화 (GitHub)</strong>
+    <strong>GitHub 저장 (기기에 저장 안 함)</strong>
     <button id="sClose">닫기</button>
   </div>
   <div class="s-body">
-    <p style="margin:0">이력·단어장·영어 학습 기록을 내 <b>비공개</b> GitHub 저장소의 <code>data.json</code>에 저장해 회사 PC·집 PC·휴대폰에서 같이 씁니다. 기기마다 처음 한 번만 설정하면 됩니다.</p>
-    <div id="sState" class="s-state">설정되지 않음</div>
+    <p style="margin:0">이력·단어장·영어 학습 기록은 이 PC나 브라우저에 <b>저장하지 않고</b> 비공개 GitHub 저장소의 <code>data.json</code>에만 저장합니다. 창을 열 때마다 비밀번호로 잠금을 풀어 주세요. 창을 닫으면 이 기기에는 아무것도 남지 않습니다.</p>
+    <div id="sState" class="s-state">잠김</div>
+    <div id="sLegacy" class="s-state err" hidden></div>
 
-    <div id="sForm">
-      <label for="sRepo">저장소 (아이디/저장소이름)</label>
-      <input id="sRepo" type="text" autocomplete="off" spellcheck="false" placeholder="ChangwooLee2/translator-data">
-      <label for="sToken">토큰 (github_pat_로 시작)</label>
-      <input id="sToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
-      <div class="s-row"><button id="sSave" class="primary">저장하고 동기화</button></div>
+    <div id="sUnlock">
+      <label for="sPass">비밀번호</label>
+      <input id="sPass" type="password" autocomplete="off" spellcheck="false" placeholder="처음 설정 때 정한 비밀번호">
+      <div class="s-row"><button id="sOpen" class="primary">잠금 해제</button></div>
     </div>
 
     <div id="sConnected" hidden>
       <div class="s-row">
-        <button id="sNow" class="primary">지금 동기화</button>
-        <button id="sShare" title="휴대폰 등 다른 기기를 같은 설정으로 연결">다른 기기 연결</button>
-        <button id="sOff">이 기기 연결 해제</button>
-      </div>
-      <div id="sShareBox" hidden>
-        <h3>다른 기기 연결</h3>
-        <p class="note" style="margin:0">휴대폰 카메라로 QR을 찍거나, 아래 링크를 다른 기기 브라우저에서 열면 토큰 입력 없이 연결됩니다. <b>링크에 토큰이 들어 있으니 다른 사람에게 보내지 마세요.</b></p>
-        <div id="qr"></div>
-        <div class="s-row"><button id="sCopyLink">연결 링크 복사</button></div>
+        <button id="sNow" class="primary">지금 저장</button>
+        <button id="sLock" title="이 창에서 토큰을 지우고 잠금 (저장되지 않은 변경은 먼저 저장)">잠그기</button>
       </div>
     </div>
 
-    <h3>토큰 만드는 법 (처음 한 번)</h3>
-    <ol>
-      <li>GitHub에서 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">새 토큰 만들기 (Fine-grained)</a> 열기</li>
-      <li>Token name: <code>translator</code>, Expiration: 1년 등 원하는 기간</li>
-      <li>Repository access: <b>Only select repositories</b> → <code>translator-data</code></li>
-      <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
-      <li><b>Generate token</b> → 나온 토큰을 위 칸에 붙여넣기</li>
-    </ol>
-    <p class="note">이 토큰은 translator-data 저장소 하나만 읽고 쓸 수 있습니다. 토큰은 이 기기 브라우저에만 저장되고 GitHub(api.github.com)로만 전송됩니다. 공용 PC에서는 쓰고 나서 [연결 해제]를 누르세요.</p>
-    <p id="dlLink"><a href="download.html" target="_blank" rel="noopener">PC 설치판 받기 · 사용법 페이지 →</a></p>
+    <details id="sSetupBox">
+      <summary>처음 설정 · 비밀번호 바꾸기 · 토큰으로 직접 연결</summary>
+      <label for="sRepo">저장소 (아이디/저장소이름)</label>
+      <input id="sRepo" type="text" autocomplete="off" spellcheck="false" placeholder="ChangwooLee2/translator-data">
+      <label for="sToken">토큰 (github_pat_로 시작)</label>
+      <input id="sToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+      <label for="sNewPass">새 비밀번호 (10자 이상 권장)</label>
+      <input id="sNewPass" type="password" autocomplete="new-password" spellcheck="false">
+      <label for="sNewPass2">새 비밀번호 확인</label>
+      <input id="sNewPass2" type="password" autocomplete="new-password" spellcheck="false">
+      <div class="s-row">
+        <button id="sMake" class="primary">연결하고 잠금 파일 만들기</button>
+        <button id="sTokenOnly" title="잠금 파일 없이 이 창에서만 토큰으로 연결">이번만 토큰으로 연결</button>
+      </div>
+      <div id="sMadeBox" hidden>
+        <h3>잠금 파일 올리기 (한 번만)</h3>
+        <p class="note" style="margin:0">아래 버튼을 누르면 GitHub에 <code>access.json</code> 새 파일 화면이 내용이 채워진 채로 열립니다. <b>Commit changes</b>를 누르면 끝입니다. 1~2분 뒤부터 모든 기기에서 비밀번호만으로 잠금이 풀립니다. 내용은 비밀번호로 암호화되어 있어 공개 저장소에 올려도 됩니다.</p>
+        <div class="s-row"><button id="sUpload" class="primary">GitHub에 access.json 올리기</button><button id="sCopyAccess">내용 복사</button></div>
+        <textarea id="sAccess" readonly rows="6" style="width:100%;font:12px monospace"></textarea>
+      </div>
+      <h3>토큰 만드는 법</h3>
+      <ol>
+        <li>GitHub에서 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">새 토큰 만들기 (Fine-grained)</a> 열기</li>
+        <li>Token name: <code>translator</code>, Expiration: 1년 등 원하는 기간</li>
+        <li>Repository access: <b>Only select repositories</b> → <code>translator-data</code></li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+        <li><b>Generate token</b> → 나온 토큰을 위 칸에 붙여넣기</li>
+      </ol>
+      <p class="note">토큰은 이 기기 어디에도 저장되지 않고 이 창의 메모리에만 있다가 창을 닫으면 사라집니다. 전송되는 곳은 GitHub(api.github.com)뿐입니다.</p>
+    </details>
   </div>
 </aside>
 
@@ -280,7 +286,7 @@
     <button id="layoutReset" title="크기 초기화: 모든 칸 크기를 처음 상태로 (경계선을 더블클릭하면 그 경계선만 원래대로)">↺</button>
     <button id="hOpen" title="번역 이력 (Ctrl+H)">이력 (0)</button>
     <button id="vOpen" title="단어장 (Ctrl+J)">단어장 (0)</button>
-    <button id="syncBtn" title="이력·단어장을 GitHub로 기기 간 동기화"><span class="dot"></span><span class="lbl">동기화</span></button>
+    <button id="syncBtn" title="이력·단어장·학습 기록을 GitHub에 저장"><span class="dot"></span><span class="lbl">잠김</span></button>
   </template>
   <section id="koen"></section>
   <div id="gutterY" class="gutter y" title="끌어서 위아래 높이 조절 · 더블클릭하면 원래 크기"></div>
@@ -313,15 +319,15 @@
 <script src="dict-lookup.js"></script>
 <script src="sync.js"></script>
 <script>
-// 다른 기기에서 보낸 연결 링크(#sync=…)로 열렸으면 설정부터 저장
-const syncImported = Sync.importFromHash();
+// 예전 버전의 토큰 연결 링크(#sync=…)는 더 이상 쓰지 않음: 주소창에서 바로 지움
+if (/[#&]sync=/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
 const NAMES = { ko: '한국어', en: '영어' };
 
-// ---- 이력 저장소 (이 기기 브라우저에 저장, 동기화를 켜면 GitHub로 공유) ----
-const H_KEY = 'offline-translator-history', H_MAX = 1000;
+// ---- 이력 (이 창 메모리 → GitHub data.json에만 저장, 기기에는 저장하지 않음) ----
+const H_MAX = 1000;
 const History = {
-  load() { try { return JSON.parse(localStorage.getItem(H_KEY)) || []; } catch { return []; } },
-  save(list) { try { localStorage.setItem(H_KEY, JSON.stringify(list.slice(0, H_MAX))); } catch {} },
+  load() { return Mem.get(Sync.K.H, []); },
+  save(list) { Mem.set(Sync.K.H, list.slice(0, H_MAX)); },
   upsert(entry) {
     const list = this.load().filter(x => x.id !== entry.id);
     list.unshift(entry);
@@ -335,7 +341,7 @@ const panes = {};
 // ---- 온라인 번역 (기기 내 번역이 없는 휴대폰 등에서만 사용) ----
 // Google 번역 공개 엔드포인트 → 실패 시 MyMemory. 처음 쓸 때 기기마다 한 번 확인받음
 const OnlineMT = (() => {
-  const OK_KEY = 'offline-translator-online-ok', subs = [];
+  const subs = [];
   const MAXQ = 1500;   // 한 번에 보내는 글자 수 (주소 길이 제한)
   function chunks(text) {
     if (text.length <= MAXQ) return [text];
@@ -372,8 +378,9 @@ const OnlineMT = (() => {
   }
   return {
     translate,
-    allowed: () => { try { return localStorage.getItem(OK_KEY) === '1'; } catch { return false; } },
-    allow: () => { try { localStorage.setItem(OK_KEY, '1'); } catch {} subs.forEach(f => f()); },
+    allowed: () => !!Sync.getSetting('onlineOk'),   // 동의 여부도 GitHub에 저장 (기기 간 공유)
+    allow: () => { Sync.setSetting('onlineOk', true); subs.forEach(f => f()); },
+    notify: () => subs.forEach(f => f()),
     onAllow: f => subs.push(f)
   };
 })();
@@ -530,8 +537,6 @@ function setTab(dir) {
 document.getElementById('tabKo').addEventListener('click', () => { setTab('koen'); koIn.focus(); });
 document.getElementById('tabEn').addEventListener('click', () => { setTab('enko'); enIn.focus(); });
 setTab('koen');
-// 설치판(로컬 파일)으로 열렸으면 웹 사이트의 안내 페이지로 연결
-if (location.protocol === 'file:') document.querySelector('#dlLink a').href = 'https://changwoolee2.github.io/Offline_Translator/download.html';
 if (!mq.matches) koIn.focus();
 
 // ---- 이력 패널 ----
@@ -585,45 +590,6 @@ function setHistoryOpen(open) {
 }
 hOpen.addEventListener('click', () => setHistoryOpen(!hPanel.classList.contains('open')));
 document.getElementById('hClose').addEventListener('click', () => setHistoryOpen(false));
-// 내보내기: 이력 전체를 JSON 파일로 다운로드
-document.getElementById('hExport').addEventListener('click', () => {
-  const list = History.load();
-  if (!list.length) { alert('내보낼 이력이 없습니다.'); return; }
-  const d = new Date(), p = n => String(n).padStart(2, '0');
-  const name = '번역이력_' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes()) + '.json';
-  const blob = new Blob([JSON.stringify(list, null, 1)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = name; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-});
-
-// 가져오기: 파일의 이력을 기존 이력에 합침 (같은 항목은 최신 것으로)
-const hFile = document.getElementById('hFile');
-document.getElementById('hImport').addEventListener('click', () => hFile.click());
-hFile.addEventListener('change', async () => {
-  const f = hFile.files[0]; hFile.value = '';
-  if (!f) return;
-  try {
-    const data = JSON.parse(await f.text());
-    const valid = (Array.isArray(data) ? data : []).filter(x =>
-      x && typeof x.id === 'string' && (x.dir === 'koen' || x.dir === 'enko') &&
-      typeof x.src === 'string' && typeof x.out === 'string' && typeof x.t === 'number');
-    if (!valid.length) { alert('불러올 수 있는 이력이 없습니다. 내보내기로 만든 파일인지 확인해 주세요.'); return; }
-    const map = new Map(History.load().map(x => [x.id, x]));
-    let added = 0;
-    for (const x of valid) {
-      const cur = map.get(x.id);
-      if (!cur) added++;
-      if (!cur || cur.t < x.t) map.set(x.id, { id: x.id, dir: x.dir, src: x.src, out: x.out, t: x.t });
-    }
-    History.save([...map.values()].sort((a, b) => b.t - a.t));
-    renderHistory(); Sync.schedule();
-    alert('이력 ' + valid.length + '개를 불러왔습니다 (새 항목 ' + added + '개).');
-  } catch {
-    alert('파일을 읽지 못했습니다. 내보내기로 만든 JSON 파일인지 확인해 주세요.');
-  }
-});
-
 document.getElementById('hClear').addEventListener('click', () => {
   if (confirm('번역 이력을 모두 삭제할까요? 되돌릴 수 없습니다.')) History.clear();
 });
@@ -632,7 +598,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !pop.classList.contains('show')) setSide(null);
   if (e.ctrlKey && e.key.toLowerCase() === 'h') { e.preventDefault(); hOpen.click(); }
 });
-window.addEventListener('storage', e => { if (e.key === H_KEY) renderHistory(); });
 // Ctrl+S: 커서가 있는 칸(없으면 위 칸)을 이력에 저장
 document.addEventListener('keydown', e => {
   if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 's') {
@@ -867,11 +832,10 @@ popOn.addEventListener('change', () => { if (!popOn.checked) hidePop(); });
 renderHistory();
 
 // ---- 단어장 ----
-// popup.html(단축키 팝업)과 같은 저장소를 씀
-const V_KEY = 'offline-translator-vocab';
+// 이 창 메모리 → GitHub data.json에만 저장
 const Vocab = {
-  load() { try { return JSON.parse(localStorage.getItem(V_KEY)) || []; } catch { return []; } },
-  save(list) { try { localStorage.setItem(V_KEY, JSON.stringify(list)); } catch {} renderVocab(); Sync.schedule(); },
+  load() { return Mem.get(Sync.K.V, []); },
+  save(list) { Mem.set(Sync.K.V, list); renderVocab(); Sync.schedule(); },
   // 같은 단어(대소문자 무시)가 있으면 추가하지 않고 false
   add({ word, meaning, example = '', src = '' }) {
     word = word.trim(); meaning = meaning.trim();
@@ -961,135 +925,104 @@ vSearch.addEventListener('input', renderVocab);
 vHide.checked = false;
 vHide.addEventListener('change', () => vPanel.classList.toggle('hide-mean', vHide.checked));
 document.getElementById('vClear').addEventListener('click', () => {
-  if (confirm('단어장을 모두 삭제할까요? 되돌릴 수 없습니다. (먼저 내보내기를 해 두면 안전합니다)')) Vocab.clear();
-});
-
-// CSV 내보내기 (엑셀에서 한글이 깨지지 않도록 BOM 포함)
-const csvCell = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
-document.getElementById('vExport').addEventListener('click', () => {
-  const list = Vocab.load();
-  if (!list.length) { alert('내보낼 단어가 없습니다.'); return; }
-  const rows = [['단어', '뜻', '예문', '추가일']].concat(list.map(v =>
-    [v.word, v.meaning, v.example || '', new Date(v.t).toLocaleString('sv-SE').slice(0, 16)]));
-  const csv = '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
-  const d = new Date(), p = n => String(n).padStart(2, '0');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = '단어장_' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '.csv';
-  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-});
-
-// CSV 가져오기: 첫 두 칸(단어, 뜻)은 필수, 세 번째 칸은 예문. 이미 있는 단어는 건너뜀
-function parseCsv(text) {
-  const rows = []; let row = [], cell = '', q = false;
-  text = text.replace(/^﻿/, '');
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (q) {
-      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
-      else if (c === '"') q = false;
-      else cell += c;
-    } else if (c === '"') q = true;
-    else if (c === ',') { row.push(cell); cell = ''; }
-    else if (c === '\n' || c === '\r') {
-      if (c === '\r' && text[i + 1] === '\n') i++;
-      row.push(cell); rows.push(row); row = []; cell = '';
-    } else cell += c;
-  }
-  if (cell || row.length) { row.push(cell); rows.push(row); }
-  return rows;
-}
-const vFile = document.getElementById('vFile');
-document.getElementById('vImport').addEventListener('click', () => vFile.click());
-vFile.addEventListener('change', async () => {
-  const f = vFile.files[0]; vFile.value = '';
-  if (!f) return;
-  try {
-    let rows = parseCsv(await f.text()).filter(r => r[0] && r[0].trim());
-    if (rows.length && rows[0][0].trim() === '단어') rows = rows.slice(1);   // 머리글 줄
-    if (!rows.length) { alert('불러올 단어가 없습니다.'); return; }
-    let added = 0;
-    for (const r of rows.reverse()) if (Vocab.add({ word: r[0], meaning: r[1] || '', example: r[2] || '' })) added++;
-    alert(`${rows.length}개 중 ${added}개를 추가했습니다 (이미 있는 단어 ${rows.length - added}개는 건너뜀).`);
-  } catch {
-    alert('파일을 읽지 못했습니다. 내보내기로 만든 CSV 파일인지 확인해 주세요.');
-  }
+  if (confirm('단어장을 모두 삭제할까요? 되돌릴 수 없습니다.')) Vocab.clear();
 });
 
 document.addEventListener('keydown', e => {
   if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'j') { e.preventDefault(); vOpen.click(); }
 });
-window.addEventListener('storage', e => { if (e.key === V_KEY) { renderVocab(); Sync.schedule(); } });   // 단축키 팝업에서 추가 시 갱신
 renderVocab();
 
-// ---- 동기화 패널 ----
+// ---- GitHub 저장 패널 ----
 const sPanel = document.getElementById('syncPanel'), syncBtn = document.getElementById('syncBtn'),
       sState = document.getElementById('sState');
 const $id = id => document.getElementById(id);
+const REPO_DEFAULT = 'ChangwooLee2/translator-data';
 function ago(t) {
   const s = Math.round((Date.now() - t) / 1000);
   return s < 60 ? '방금' : s < 3600 ? Math.round(s / 60) + '분 전' : fmtTime(t);
 }
 function renderSync(st = Sync.state) {
   const on = Sync.configured(), c = Sync.config();
-  $id('sForm').hidden = on; $id('sConnected').hidden = !on;
-  if (!on) $id('sShareBox').hidden = true;
-  syncBtn.className = on ? st.status : '';
-  const last = (st.at || (c && c.last)) ? ago(st.at || c.last) : '';
-  syncBtn.querySelector('.lbl').textContent = !on ? '동기화' : st.status === 'busy' ? '동기화 중' : st.status === 'err' ? '동기화 오류' : '동기화됨';
-  syncBtn.title = !on ? '이력·단어장을 GitHub로 기기 간 동기화 (설정 필요)' : (st.msg || '') + (last ? ' · 마지막 ' + last : '');
-  sState.className = 's-state' + (st.status === 'err' ? ' err' : st.status === 'ok' ? ' ok' : '');
-  sState.textContent = !on ? '설정되지 않음 — 아래 저장소와 토큰을 입력하세요'
-    : (st.status === 'err' ? '⚠ ' + st.msg : st.status === 'busy' ? '동기화 중…' : '연결됨: ' + c.repo + (last ? ' · 마지막 동기화 ' + last : ''));
+  $id('sUnlock').hidden = on; $id('sConnected').hidden = !on;
+  syncBtn.className = on ? st.status : (Sync.dirty() ? 'err' : '');
+  const last = st.at ? ago(st.at) : '';
+  syncBtn.querySelector('.lbl').textContent = !on ? (Sync.dirty() ? '잠김 · 미저장' : '잠김')
+    : st.status === 'busy' ? '저장 중' : st.status === 'err' ? '저장 오류' : Sync.dirty() ? '저장 대기' : '저장됨';
+  syncBtn.title = !on ? '잠금을 풀어야 GitHub에 저장됩니다 (이 기기에는 저장하지 않음)' : (st.msg || '') + (last ? ' · 마지막 ' + last : '');
+  sState.className = 's-state' + (st.status === 'err' ? ' err' : on && st.status === 'ok' ? ' ok' : '');
+  sState.textContent = !on
+    ? (Sync.dirty() ? '⚠ 잠겨 있어 아직 저장되지 않은 내용이 있습니다. 창을 닫기 전에 잠금을 풀어 주세요.' : '잠김 — 비밀번호를 입력하면 GitHub의 이력·단어장·학습 기록을 불러옵니다')
+    : (st.status === 'err' ? '⚠ ' + st.msg : st.status === 'busy' ? '저장 중…' : '연결됨: ' + c.repo + (last ? ' · 마지막 저장 ' + last : ''));
+  const lg = Sync.legacy();
+  $id('sLegacy').hidden = !lg.count;
+  $id('sLegacy').textContent = lg.count ? '이 브라우저에 예전 버전이 저장해 둔 데이터 ' + lg.count + '건이 있습니다. 잠금을 풀면 GitHub로 옮긴 뒤 이 기기에서 지웁니다.' : '';
 }
 Sync.onState(renderSync);
-Sync.onApplied = () => { renderHistory(); renderVocab(); window.Study && Study.refresh(); };
-syncBtn.addEventListener('click', () => {
-  if (sPanel.classList.contains('open')) { setSide(null); return; }
-  setSide(sPanel); renderSync();
-  if (!Sync.configured()) $id('sRepo').value ||= 'ChangwooLee2/translator-data';
-});
+Sync.onApplied = () => { renderHistory(); renderVocab(); renderSync(); if (OnlineMT.allowed()) OnlineMT.notify(); window.Study && Study.refresh(); };
+function openSync() { setSide(sPanel); renderSync(); if (!Sync.configured()) setTimeout(() => $id('sPass').focus(), 50); }
+syncBtn.addEventListener('click', () => { if (sPanel.classList.contains('open')) setSide(null); else openSync(); });
 $id('sClose').addEventListener('click', () => setSide(null));
-$id('sSave').addEventListener('click', async () => {
-  try { await Sync.setup($id('sRepo').value, $id('sToken').value); $id('sToken').value = ''; window.Study && Study.onSyncConfigured(); }
-  catch (e) { sState.className = 's-state err'; sState.textContent = '⚠ ' + e.message; }
-  renderSync();
+const showErr = e => { sState.className = 's-state err'; sState.textContent = '⚠ ' + (e.message || e); };
+const afterConnect = () => { window.Study && Study.onSyncConfigured(); renderSync(); };
+
+$id('sOpen').addEventListener('click', async () => {
+  const pass = $id('sPass').value;
+  if (!pass) { $id('sPass').focus(); return; }
+  sState.className = 's-state'; sState.textContent = '잠금 해제 중…';
+  try { await Sync.unlock(pass); $id('sPass').value = ''; afterConnect(); if (Sync.state.status === 'ok') setTimeout(() => setSide(null), 600); }
+  catch (e) { showErr(e); $id('sPass').select(); }
 });
-$id('sToken').addEventListener('keydown', e => { if (e.key === 'Enter') $id('sSave').click(); });
+$id('sPass').addEventListener('keydown', e => { if (e.key === 'Enter') $id('sOpen').click(); });
 $id('sNow').addEventListener('click', () => Sync.run());
-$id('sOff').addEventListener('click', () => {
-  if (confirm('이 기기의 동기화 연결을 해제할까요?\n(이 기기의 이력·단어장과 GitHub의 data.json은 그대로 남습니다)')) { Sync.disconnect(); renderSync(); }
+$id('sLock').addEventListener('click', async () => {
+  if (Sync.dirty()) await Sync.run();
+  if (Sync.dirty() && !confirm('아직 저장되지 않은 변경이 있습니다. 그래도 잠글까요?')) return;
+  Sync.lock(); renderSync();
 });
-// 다른 기기 연결: 웹 주소 + #sync=… 링크와 QR
-const WEB_URL = location.protocol === 'file:' ? 'https://changwoolee2.github.io/Offline_Translator/' : location.origin + location.pathname;
-function loadQrLib() {
-  if (window.qrcode) return Promise.resolve();
-  return new Promise((res, rej) => {
-    const s = document.createElement('script');
-    s.src = 'qrcode.js';
-    s.onload = res; s.onerror = rej; document.head.append(s);
-  });
-}
-$id('sShare').addEventListener('click', async () => {
-  const box = $id('sShareBox');
-  box.hidden = !box.hidden;
-  if (box.hidden) return;
-  const link = Sync.shareLink(WEB_URL), q = $id('qr');
-  q.textContent = 'QR 만드는 중…';
+
+$id('sMake').addEventListener('click', async () => {
+  const repo = $id('sRepo').value || REPO_DEFAULT, token = $id('sToken').value, p1 = $id('sNewPass').value, p2 = $id('sNewPass2').value;
   try {
-    await loadQrLib();
-    const qr = qrcode(0, 'L'); qr.addData(link); qr.make();
-    q.innerHTML = qr.createImgTag(4, 0);
-  } catch { q.textContent = '(QR을 만들지 못했습니다. 아래 링크 복사를 이용하세요)'; }
+    if (p1.length < 8) throw new Error('비밀번호는 8자 이상으로 정해 주세요 (10자 이상 권장)');
+    if (p1 !== p2) throw new Error('비밀번호 확인이 다릅니다');
+    sState.className = 's-state'; sState.textContent = '연결 확인 중…';
+    await Sync.connect(repo, token);
+    if (Sync.state.status === 'err') throw new Error(Sync.state.msg);
+    $id('sAccess').value = await Sync.makeAccess(Sync.config().repo, Sync.config().token, p1);
+    $id('sMadeBox').hidden = false;
+    ['sToken', 'sNewPass', 'sNewPass2'].forEach(id => $id(id).value = '');
+    afterConnect();
+  } catch (e) { showErr(e); }
 });
-$id('sCopyLink').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(Sync.shareLink(WEB_URL)); $id('sCopyLink').textContent = '복사됨 ✓'; }
-  catch { prompt('이 링크를 복사하세요', Sync.shareLink(WEB_URL)); }
-  setTimeout(() => $id('sCopyLink').textContent = '연결 링크 복사', 1500);
+$id('sTokenOnly').addEventListener('click', async () => {
+  try { await Sync.connect($id('sRepo').value || REPO_DEFAULT, $id('sToken').value); $id('sToken').value = ''; afterConnect(); }
+  catch (e) { showErr(e); }
+});
+const SITE_REPO = 'ChangwooLee2/Offline_Translator';
+$id('sUpload').addEventListener('click', async () => {
+  const text = $id('sAccess').value;
+  // 이미 있으면 편집 화면, 없으면 새 파일 화면 (암호화된 내용만 주소에 담김)
+  const exists = !!(await Sync.access());
+  const url = exists ? 'https://github.com/' + SITE_REPO + '/edit/main/access.json'
+                     : 'https://github.com/' + SITE_REPO + '/new/main?filename=access.json&value=' + encodeURIComponent(text);
+  if (exists) { try { await navigator.clipboard.writeText(text); } catch {} alert('access.json이 이미 있습니다. 편집 화면에서 내용을 모두 지우고 붙여넣은 뒤 Commit changes를 누르세요. (내용은 복사해 두었습니다)'); }
+  window.open(url, '_blank', 'noopener');
+});
+$id('sCopyAccess').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($id('sAccess').value); $id('sCopyAccess').textContent = '복사됨 ✓'; }
+  catch { $id('sAccess').select(); }
+  setTimeout(() => $id('sCopyAccess').textContent = '내용 복사', 1500);
 });
 setInterval(() => renderSync(), 30000);   // '방금/몇 분 전' 표시 갱신
-if (Sync.configured()) Sync.run();
-if (syncImported) { setSide(sPanel); renderSync(); }
+
+// 시작: 예전 버전 설정이 남아 있던 기기면 한 번 이관 저장, 아니면 잠금 해제 안내
+(async () => {
+  if (Sync.configured()) { await Sync.run(); afterConnect(); return; }
+  const a = await Sync.access();
+  if (!a) $id('sSetupBox').open = true;
+  if (!a || Sync.legacy().count) openSync();
+})();
 
 // ---- 휴대폰: 길게 눌러 선택하면 팝업 번역 (마우스 이벤트가 없으므로 선택 변화로 감지) ----
 let touchSel = null, lastPointer = 'mouse';
@@ -1112,11 +1045,6 @@ function onTouchSelection() {
 }
 document.addEventListener('selectionchange', onTouchSelection);
 document.querySelectorAll('textarea').forEach(t => t.addEventListener('selectionchange', onTouchSelection));
-
-// ---- 오프라인에서도 열리도록 (웹 주소로 열었을 때만) ----
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
 
 // Ctrl+↑ / Ctrl+↓ 로 위아래 입력칸 이동
 document.addEventListener('keydown', e => {

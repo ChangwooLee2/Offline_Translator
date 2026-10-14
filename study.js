@@ -1,13 +1,13 @@
 // 영어 데스크 — 데일리 영어 학습
 // 학습 자료: 비공개 저장소의 lessons/<id>.json (매일 새벽 Claude 예약 작업이 생성)
-// 학습 기록·피드백: data.json의 study 배열 (sync.js가 기기 간 동기화) → 다음 자료 생성 때 반영
+// 학습 기록·피드백: data.json의 study 배열 (sync.js가 GitHub에 저장) → 다음 자료 생성 때 반영
+// 이 기기(PC·브라우저)에는 아무것도 저장하지 않음: 학습 자료·기록은 이 창 메모리에만 둠
 (function () {
-  const S_KEY = 'ed-study', IDX_KEY = 'ed-lesson-index', L_PREFIX = 'ed-lesson-', MODE_KEY = 'ed-mode';
+  const S_KEY = Sync.K.S, IDX_KEY = 'lesson-index', L_PREFIX = 'lesson:';
   const SAMPLE_URL = 'study/sample/2026-10-07.json';
   const root = document.getElementById('studyView');
 
-  const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
-  const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const read = (k, d) => Mem.get(k, d), write = (k, v) => Mem.set(k, v);
   const pad = n => String(n).padStart(2, '0');
   const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
   const todayStr = () => ymd(new Date());
@@ -126,8 +126,9 @@
     if (active && lastTick) {
       rec.seconds = (rec.seconds || 0) + Math.min(5, (now - lastTick) / 1000);
       const t = root.querySelector('.st-timer'); if (t) t.textContent = fmtDur(rec.seconds);
-      if (Math.floor(rec.seconds) % 30 === 0) saveRec(rec, { sync: false });
-      else write(S_KEY, records().filter(r => r.id !== rec.id).concat([rec]));
+      // 학습 시간은 3분마다 GitHub에 저장 (화면을 벗어나거나 창을 닫으려 할 때도 저장)
+      if (Math.floor(rec.seconds) % 180 === 0) saveRec(rec);
+      else { write(S_KEY, records().filter(r => r.id !== rec.id).concat([rec])); Sync.markDirty(); }
     }
     lastTick = active ? now : 0;
   }
@@ -151,7 +152,7 @@
       btn('오늘 학습', state.tab === 'today' && !state.viewing ? 'on' : '', () => { state.tab = 'today'; state.viewing = null; render(); root.scrollTop = 0; }),
       btn('달력 · 이력', state.tab === 'cal' || state.viewing ? 'on' : '', () => { state.tab = 'cal'; state.viewing = null; render(); root.scrollTop = 0; }),
       btn('새로고침', '', () => load()));
-    const ss = el('span', 'st-sync', Sync.configured() ? (Sync.state.status === 'err' ? '⚠ 동기화 오류' : '') : '동기화 미설정');
+    const ss = el('span', 'st-sync', Sync.configured() ? (Sync.state.status === 'err' ? '⚠ 저장 오류' : '') : '잠김 (저장 안 됨)');
     sub.append(ss);
     wrap.append(sub);
     if (state.viewing) renderReviewView(wrap);
@@ -167,8 +168,8 @@
 
   function renderToday(wrap) {
     if (state.source === 'sample') {
-      const b = banner(wrap, '<b>미리보기 (Day 1)</b> — 동기화를 연결하면 매일 새 학습이 준비되고, 기록과 피드백이 다음 학습에 반영됩니다. ');
-      b.append(btn('동기화 설정', '', () => document.getElementById('syncBtn').click()));
+      const b = banner(wrap, '<b>미리보기 (Day 1)</b> — 잠금을 풀면 GitHub에 준비된 오늘 학습을 불러오고, 기록과 피드백이 다음 학습에 반영됩니다. ');
+      b.append(btn('잠금 해제', '', () => document.getElementById('syncBtn').click()));
     }
     if (state.error) banner(wrap, '학습 자료를 불러오지 못했습니다: ' + state.error + ' (저장해 둔 자료를 표시합니다)');
     if (state.loading && !state.lesson) { wrap.append(el('div', 'st-empty', '학습 자료를 불러오는 중…')); return; }
@@ -565,7 +566,6 @@
     document.body.classList.toggle('mode-study', study);
     document.getElementById('modeTr')?.classList.toggle('on', !study);
     document.getElementById('modeSt')?.classList.toggle('on', study);
-    write(MODE_KEY, mode);
     if (study) { if (!loaded) { loaded = true; load(); } else render(); }
     else stopAudio();
   }
@@ -596,9 +596,5 @@
   document.getElementById('modeSt')?.addEventListener('click', () => setMode('study'));
   setInterval(tick, 1000);
   document.addEventListener('visibilitychange', () => { lastTick = 0; });
-  if (read(MODE_KEY, 'translate') === 'study') setMode('study');
-  else {   // 번역 모드여도 오늘 학습 여부(배지)는 표시
-    const idx = read(IDX_KEY, []), last = idx[idx.length - 1];
-    if (last && Sync.configured()) { state.source = 'repo'; state.lesson = read(L_PREFIX + last.id, null) || { id: last.id }; updateBadge(); state.lesson = null; }
-  }
+
 })();

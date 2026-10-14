@@ -1,4 +1,4 @@
-// 오프라인 사전 조회 — 번역기.html, popup.html 공용
+// 사전 조회 (dict-en.js·dict-ko.js를 필요할 때 불러옴)
 // 사전 데이터(dict-en.js, dict-ko.js)는 처음 조회할 때 한 번만 불러옴
 // 출처: Wiktionary(kaikki.org, CC BY-SA 4.0), kengdic(MPL 2.0)
 (function () {
